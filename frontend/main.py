@@ -24,55 +24,54 @@ from connection import Usuario
 
 
 class Gerenciador(ScreenManager):
-	pass
+	# def on_pre_enter(self):
+	# 	with open(self.path+"data.json", 'r') as data:
+	pass			
 
 class Login(MDScreen):
 	
 	def do_login(self, *args):
-		login = self.ids.id_text_login.text
+		email = self.ids.id_text_login.text
 		senha = self.ids.id_text_password.text
 
-		dados_carregados = ""
+
+		user = Usuario()
+		if user.do_login(email, senha):
+			self.pass_of_login()
+		else:
+			print("errado!!!!")
 
 
-		try:
-			with open("data.json", "r") as data:
-				dados_carregados = json.load(data)
-		except FileNotFoundError:
-			pass
-		
-		print(dados_carregados)
-		
-		for data in dados_carregados:
-			if data[0] == login and data[1] == senha:
-				print("logado com sucesso!")
-				self.on_release()
-			else:
-				print("errado seu intruso!")
-		#print(login + " " + senha)
 
 
-	def on_release(self, *args):
+	def pass_of_login(self, *args):
 		App.get_running_app().root.current = "registro_name"
 
 
 
 
 class Registro(MDScreen):
-	def on_pre_enter(self):
-		users = Usuario()
-		data_list = []
+	def do_register(self, *args):
+		data = {
+			"first_name" : self.ids.id_first_name.text,
+			"last_name" : self.ids.id_last_name.text,
+			"email" : self.ids.id_email.text,
+			"password" : self.ids.id_password.text
+		}
 
-		for data in users.buscar_dados():
-			self.ids.test_api_id.add_widget(Usuarios(data['first_name']))
-			data_list.append(data)
-			print(data)
+		user = Usuario()
+		
+		if user.do_register(data):
+			self.pass_of_register()
+		else:
+			print("errado!!!!!")
 
 
-class Usuarios(BoxLayout):
-	def __init__(self, first_name, **kwargs):
-		super().__init__(**kwargs)
-		self.ids.label_id_test.text = first_name
+	def pass_of_register(self, *args):
+		App.get_running_app().root.current = "login_name"
+
+
+
 
 
 # para poder usar MDKivy preciso construir com MDApp
@@ -81,3 +80,26 @@ class AnalizyApp(MDApp):
 		return Gerenciador()
 
 AnalizyApp().run()
+
+
+
+
+
+
+
+
+# dados_carregados = ""
+# try:
+# 	with open("data.json", "r") as data:
+# 		dados_carregados = json.load(data)
+# except FileNotFoundError:
+# 	pass
+
+# print(dados_carregados)
+
+# for data in dados_carregados:
+# 	if data[0] == login and data[1] == senha:
+# 		print("logado com sucesso!")
+# 		self.on_release()
+# 	else:
+# 		print("errado seu intruso!")
