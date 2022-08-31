@@ -20,7 +20,7 @@ import json
 
 
 
-
+from connection import Usuario
 
 
 class Gerenciador(ScreenManager):
@@ -59,7 +59,21 @@ class Login(MDScreen):
 
 
 class Registro(MDScreen):
-	pass
+	def on_pre_enter(self):
+		users = Usuario()
+		data_list = []
+
+		for data in users.buscar_dados():
+			self.ids.test_api_id.add_widget(Usuarios(data['first_name']))
+			data_list.append(data)
+			print(data)
+
+
+class Usuarios(BoxLayout):
+	def __init__(self, first_name, **kwargs):
+		super().__init__(**kwargs)
+		self.ids.label_id_test.text = first_name
+
 
 # para poder usar MDKivy preciso construir com MDApp
 class AnalizyApp(MDApp):

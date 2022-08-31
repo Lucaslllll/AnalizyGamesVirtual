@@ -76,6 +76,25 @@
 		id: box_login
 		orientation: "vertical"
 		padding: root.width*0.15, root.height*0.20
-		#spacing: '20dp'	
+		#spacing: '20dp'
+
+
+		ScrollView:
+			BoxLayout:
+				id: test_api_id
+				orientation: "vertical"
+				size_hint_y: None
+				height: self.minimum_height	
+
+
+<Usuarios>:
+	size_hint_y: None
+	height: '100sp'
+
+	Label:
+		id: label_id_test
+		font_size: 25
+		color: 0,0,0,1
+		#font_name: "fonts/DotBoundary-Fixed Fixed.otf"
 
 # custom class
