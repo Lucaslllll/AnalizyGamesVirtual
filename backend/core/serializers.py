@@ -21,7 +21,6 @@ class LoginSerializer(serializers.Serializer):
     def validate(self, data):
         
 
-        print(data)
         try:
             userOb = Usuario.objects.get(email=data['email'])
         except Usuario.DoesNotExist:

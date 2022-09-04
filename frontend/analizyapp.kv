@@ -1,10 +1,18 @@
 <Gerenciador>:
+	Login:
+		name: "login_name"
+
+
+	Inicio:
+		name: "inicio_name"
+
+	
+
 	Registro:
 		name: "registro_name"
 
 
-	Login:
-		name: "login_name"
+
 
 	
 
@@ -66,14 +74,27 @@
 		            self.icon = "eye" if self.icon == "eye-off" else "eye-off"
 		            id_text_password.password = False if id_text_password.password is True else True
 
-		MDFlatButton:
-			id: id_button_login
-		    text: "Entrar"
-		    theme_text_color: "Custom"
-		    md_bg_color: 0, 0.5, 0.2, 1
-		    text_color: 1, 1, 1, 1
-		    on_release: root.do_login()
+		BoxLayout:
+			id: box_entrar_cadastrar
+			orientation: "horizontal"
+			padding: 0, 0
+			spacing: "30dp"
 
+			MDFlatButton:
+				id: id_button_login
+			    text: "Entrar"
+			    theme_text_color: "Custom"
+			    md_bg_color: 0, 0.5, 0.2, 1
+			    text_color: 1, 1, 1, 1
+			    on_release: root.do_login()
+
+			MDFlatButton:
+				id: id_login_button
+			    text: "Cadastra-se"
+			    theme_text_color: "Custom"
+			    md_bg_color: 0.5, 0.5, 0, 1
+			    text_color: 1, 1, 1, 1
+			    on_release: root.pass_to_register()	
 
 
 <Registro>:
@@ -82,6 +103,15 @@
 		orientation: "vertical"
 		padding: root.width*0.15, root.height*0.20
 		#spacing: '20dp'
+
+		canvas:
+			Color:
+				rgba: (1, 1, 1, 1)
+
+			Rectangle:
+				size: self.size
+				pos: 0,0
+				source: "images/background-cadastro.png"
 
 
 		ScrollView:
@@ -97,14 +127,14 @@
 				    hint_text: "Primeiro Nome"
 				    line_color_normal: 1, 0, 1, 1
 				    text_color_focus: 0, 0, 0, 1
-				    required: True
+				    #required: True
 
 				MDTextField:
 					id: id_last_name
 				    hint_text: "Sobrenome"
 				    line_color_normal: 1, 0, 1, 1
 				    text_color_focus: 0, 0, 0, 1
-				    required: True
+				    #required: True
 
 				MDTextField:
 					id: id_email
@@ -127,7 +157,7 @@
 						hint_text: "Senha"
 						line_color_normal: 1, 0, 1, 1
 						text_color_focus: 0, 0, 0, 1
-						required: True
+						#required: True
 						password: True
 			        	icon_left: "key-variant"
 
@@ -146,6 +176,62 @@
 				    theme_text_color: "Custom"
 				    md_bg_color: 0, 0.2, 0.5, 1
 				    text_color: 1, 1, 1, 1
-				    on_release: root.do_register()	
+				    on_release: root.do_register()
 
+
+
+
+<Inicio>:
+	
+
+	MDBottomNavigation:
+        panel_color: "#70e806"
+        selected_color_background: "orange"
+        text_color_active: "lightgrey"
+
+        MDBottomNavigationItem:
+            name: 'screen 1'
+            text: 'Mail'
+            #icon: 'gmail'
+            #badge_icon: "numeric-10"
+            on_tab_release: app.root.current = "login_name"
+
+            ScrollView:
+				BoxLayout:
+					id: id_jogo_stats
+					orientation: "vertical"
+
+					canvas:
+						Color:
+							rgba: (1, 1, 1, 1)
+						Rectangle:
+							size: self.size
+							pos: 0, 0
+
+
+
+        MDBottomNavigationItem:
+            name: 'screen 2'
+            text: 'Twitter'
+            #icon: 'twitter'
+            #badge_icon: "numeric-5"
+            on_tab_release: app.root.current = "stats_name"
+
+       
+        MDBottomNavigationItem:
+            name: 'screen 3'
+            text: 'Menu'
+            #icon: 'linkedin'
+
+
+
+<Table>:
+	sizi_hint_y: None
+	height: "90sp"
+
+	Label:
+		id: label_table
+		font_size: 20
+		color: 0, 0, 0, 1
+    
 # custom class

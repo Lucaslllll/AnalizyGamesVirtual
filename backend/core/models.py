@@ -9,3 +9,5 @@ class Usuario(models.Model):
 	active = models.BooleanField(default=False)
 	date_expiration = models.DateTimeField(null=True, blank=True)
 
+# class Jogos(models.Model):
+# 	

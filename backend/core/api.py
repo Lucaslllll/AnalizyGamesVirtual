@@ -21,7 +21,7 @@ class LoginAPI(generics.GenericAPIView):
 
         userOb = Usuario.objects.get(email=serializer.validated_data['email'])
 
-        return Response({   
+        return Response({
                             "id": userOb.id,
                             "first_name": userOb.first_name,
                             "last_name": userOb.last_name,
