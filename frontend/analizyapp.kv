@@ -11,6 +11,14 @@
 	Registro:
 		name: "registro_name"
 
+	Placares:
+		name: "placares_name"
+
+	Menu:
+		name: "menu_name"
+
+
+
 
 
 
@@ -86,7 +94,7 @@
 			    theme_text_color: "Custom"
 			    md_bg_color: 0, 0.5, 0.2, 1
 			    text_color: 1, 1, 1, 1
-			    on_release: root.do_login()
+			    on_release: root.do_login(), load_spinner.active = True
 
 			MDFlatButton:
 				id: id_login_button
@@ -96,6 +104,14 @@
 			    text_color: 1, 1, 1, 1
 			    on_release: root.pass_to_register()	
 
+
+		MDSpinner:
+			id: load_spinner
+	        size_hint: None, None
+	        size: dp(46), dp(46)
+	        pos_hint: {'center_x': .5, 'center_y': .5}
+	        #active: True if root.load_if == True else False
+	        active: False
 
 <Registro>:
 	BoxLayout:
@@ -185,16 +201,17 @@
 	
 
 	MDBottomNavigation:
-        panel_color: "#70e806"
+        panel_color: "#06e836"
         selected_color_background: "orange"
         text_color_active: "lightgrey"
 
+
         MDBottomNavigationItem:
             name: 'screen 1'
-            text: 'Mail'
+            text: 'Inicio'
             #icon: 'gmail'
             #badge_icon: "numeric-10"
-            on_tab_release: app.root.current = "login_name"
+            
 
             ScrollView:
 				BoxLayout:
@@ -212,16 +229,18 @@
 
         MDBottomNavigationItem:
             name: 'screen 2'
-            text: 'Twitter'
+            text: 'Placares'
             #icon: 'twitter'
             #badge_icon: "numeric-5"
-            on_tab_release: app.root.current = "stats_name"
-
+            on_tab_release: app.root.current = "placares_name"
+            #on_tab_release: root.pass_to("inicio_name")
+            #on_tab_release: self.manager.current= "register_name"
        
         MDBottomNavigationItem:
             name: 'screen 3'
             text: 'Menu'
             #icon: 'linkedin'
+            on_tab_release: app.root.current = "menu_name"
 
 
 
@@ -234,4 +253,55 @@
 		font_size: 20
 		color: 0, 0, 0, 1
     
+
+
+
+
+
+<Placares>:
+
+	MDNavigationDrawer:
+		type: "modal"
+
+	    MDNavigationDrawerMenu:
+
+	        MDNavigationDrawerHeader:
+	            title: "Header title"
+	            text: "Header text"
+	            spacing: "4dp"
+	            padding: "12dp", 0, 0, "56dp"
+
+	        MDNavigationDrawerItem
+	            icon: "gmail"
+	            right_text: "+99"
+	            text: "Inbox"
+
+
+
+
+<Menu>:
+	
+
+
+
+
+
+
+
+
 # custom class
+
+<DrawerClickableItem@MDNavigationDrawerItem>
+    focus_color: "#e7e4c0"
+    text_color: "#4a4939"
+    icon_color: "#4a4939"
+    ripple_color: "#c5bdd2"
+    selected_color: "#0c6c4d"
+
+
+<DrawerLabelItem@MDNavigationDrawerItem>
+    text_color: "#4a4939"
+    icon_color: "#4a4939"
+    focus_behavior: False
+    selected_color: "#4a4939"
+    _no_ripple_effect: True

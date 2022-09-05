@@ -30,21 +30,21 @@ class Gerenciador(MDScreenManager):
     dados_user = []
     userON = True
     path = ""
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.path = App.get_running_app().user_data_dir+"/"
+    # def __init__(self, **kwargs):
+    #     super().__init__(**kwargs)
+    #     self.path = App.get_running_app().user_data_dir+"/"
 
-        try:
-            with open("data.json", 'r') as data:
-                self.dados_user = json.load(data)
-        except FileNotFoundError:
-            self.userON = False
+    #     try:
+    #         with open("data.json", 'r') as data:
+    #             self.dados_user = json.load(data)
+    #     except FileNotFoundError:
+    #         self.userON = False
 
-        userON = self.dados_user['userON']
-        print(userON)
+    #     userON = self.dados_user['userON']
+    #     print(userON)
 
-        if userON == True:
-            self.current = "inicio_name"
+    #     if userON == True:
+    #         self.current = "inicio_name"
 
 
 
@@ -52,6 +52,7 @@ class Gerenciador(MDScreenManager):
 
 class Login(MDScreen):
     path = ""
+    load_if = False
     def do_login(self, *args):
         email = self.ids.id_text_login.text
         senha = self.ids.id_text_password.text
@@ -69,6 +70,7 @@ class Login(MDScreen):
 
 
     def pass_of_login(self, *args):
+        self.load_if = True
         self.path = App.get_running_app().user_data_dir+"/"
         
         with open("data.json", "w") as data:
@@ -108,18 +110,23 @@ class Registro(MDScreen):
 
 class Inicio(MDScreen):
 
-    def on_pre_enter(self):
+
+    def carregar_jogos(self):
         scan = JogosStats()
 
         jogos = scan.get()
 
         # self.ids.box.add_widget(Tarefa(text=tarefa))
-        
+        print("AAAAAAA")
         for jogo in jogos:
             print(jogo["full_time_result"])
             self.ids.id_jogo_stats.add_widget(Table(text=str(jogo["time"]+" | "+jogo["home_team"]+" X "+jogo["away_team"]+" = ")
                                     ))
+    def on_pre_enter(self):
+        self.carregar_jogos()
 
+    def pass_to(self, name):
+        App.get_running_app().root.current = name 
 
     def on_pre_leave(self, *args):
         self.ids.id_jogo_stats.clear_widgets()
@@ -130,7 +137,14 @@ class Table(MDBoxLayout):
         self.ids.label_table.text = text
 
 
+class Placares(MDScreen):
+    pass
 
+
+class Menu(MDScreen):
+    pass
+
+    
 # para poder usar MDKivy preciso construir com MDApp
 class AnalizyApp(MDApp):
     def build(self):
