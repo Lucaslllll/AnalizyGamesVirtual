@@ -52,7 +52,7 @@ class Gerenciador(MDScreenManager):
 
 class Login(MDScreen):
     path = ""
-    load_if = False
+
     def do_login(self, *args):
         email = self.ids.id_text_login.text
         senha = self.ids.id_text_password.text
@@ -60,6 +60,7 @@ class Login(MDScreen):
 
         user = Usuario()
         if user.do_login(email, senha):
+            self.ids.load_spinner.active = True
             self.pass_of_login()
         elif user.do_login(email, senha) == None:
             print("Conexão não estabelecida com o servidor!")
@@ -73,6 +74,7 @@ class Login(MDScreen):
         self.load_if = True
         self.path = App.get_running_app().user_data_dir+"/"
         
+        print(self.ids.load_spinner.active)
         with open("data.json", "w") as data:
             json.dump({"userON":True}, data)
         
