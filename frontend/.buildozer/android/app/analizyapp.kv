@@ -2,8 +2,27 @@
 	Login:
 		name: "login_name"
 
+
+	Inicio:
+		name: "inicio_name"
+
+	
+
 	Registro:
 		name: "registro_name"
+
+	Placares:
+		name: "placares_name"
+
+	Menu:
+		name: "menu_name"
+
+
+
+
+
+
+	
 
 
 <Login>:
@@ -36,6 +55,8 @@
 		    line_color_normal: 1, 0, 1, 1
 		    text_color_focus: 0, 0, 0, 1
 		    required: True
+		    validator: "email"
+
 
 		BoxLayout:
 			orientation: "horizontal"
@@ -61,15 +82,270 @@
 		            self.icon = "eye" if self.icon == "eye-off" else "eye-off"
 		            id_text_password.password = False if id_text_password.password is True else True
 
-		MDFlatButton:
-			id: id_button_login
-		    text: "Entrar"
-		    theme_text_color: "Custom"
-		    md_bg_color: 0, 0.5, 0.2, 1
-		    text_color: 0.2, 0.2, 0.8, 1
+		BoxLayout:
+			id: box_entrar_cadastrar
+			orientation: "horizontal"
+			padding: 0, 0
+			spacing: "30dp"
+
+			MDFlatButton:
+				id: id_button_login
+			    text: "Entrar"
+			    theme_text_color: "Custom"
+			    md_bg_color: 0, 0.5, 0.2, 1
+			    text_color: 1, 1, 1, 1
+			    on_release: root.do_login()
+			    on_press: root.on_press_spinner()
+
+			MDFlatButton:
+				id: id_login_button
+			    text: "Cadastra-se"
+			    theme_text_color: "Custom"
+			    md_bg_color: 0.5, 0.5, 0, 1
+			    text_color: 1, 1, 1, 1
+			    on_release: root.pass_to_register()	
+
+
+		BoxLayout:
+			id: load_spinner_container
+			orientation: "vertical"
+			padding: 0, 0
+			spacing: "30dp"
+
+			MDSpinner:
+				id: load_spinner
+		        size_hint: None, None
+		        size: dp(20), dp(20)
+		        pos_hint: {'center_x': .5, 'center_y': .5}
+		        #active: True if root.load_if == True else False
+		        active: False
+		        determinate_time: 0
+
+
+<Registro>:
+	BoxLayout:
+		id: box_login
+		orientation: "vertical"
+		padding: root.width*0.15, root.height*0.20
+		#spacing: '20dp'
+
+		canvas:
+			Color:
+				rgba: (1, 1, 1, 1)
+
+			Rectangle:
+				size: self.size
+				pos: 0,0
+				source: "images/background-cadastro.png"
+
+
+		ScrollView:
+			BoxLayout:
+				id: register_id
+				orientation: "vertical"
+				size_hint_y: None
+				height: self.minimum_height	
+
+
+				MDTextField:
+					id: id_first_name
+				    hint_text: "Primeiro Nome"
+				    line_color_normal: 1, 0, 1, 1
+				    text_color_focus: 1, 1, 1, 1
+				    #required: True
+
+				MDTextField:
+					id: id_last_name
+				    hint_text: "Sobrenome"
+				    line_color_normal: 1, 0, 1, 1
+				    text_color_focus: 1, 1, 1, 1
+				    #required: True
+
+				MDTextField:
+					id: id_email
+				    hint_text: "Email"
+				    line_color_normal: 1, 0, 1, 1
+				    text_color_focus: 1, 1, 1, 1
+				    required: True
+				    helper_text: "user@gmail.com"
+				    validator: "email"
+
+
+				BoxLayout:
+					orientation: "horizontal"
+					size_hint_y: None
+					height: id_password.height
+
+					MDTextField:
+						id: id_password
+						color: 0, 0, 0, 1
+						hint_text: "Senha"
+						line_color_normal: 1, 0, 1, 1
+						text_color_focus: 1, 1, 1, 1
+						#required: True
+						password: True
+			        	icon_left: "key-variant"
+
+			        MDIconButton:
+			        	icon: "eye-off"
+				        pos_hint: {"center_y": .5}
+				        pos: id_password.width - self.width + dp(8), 0
+				        theme_text_color: "Hint"
+				        on_release:
+				            self.icon = "eye" if self.icon == "eye-off" else "eye-off"
+				            id_password.password = False if id_password.password is True else True
+
+				MDFlatButton:
+					id: id_login_button
+				    text: "Cadastrar"
+				    theme_text_color: "Custom"
+				    md_bg_color: 0, 0.2, 0.5, 1
+				    text_color: 1, 1, 1, 1
+				    on_release: root.do_register()
+
+
+
+
+<Inicio>:
+	
+
+	MDBottomNavigation:
+        panel_color: "#06e836"
+        selected_color_background: "orange"
+        text_color_active: "lightgrey"
+
+
+        MDBottomNavigationItem:
+            name: 'screen 1'
+            text: 'Inicio'
+            #icon: 'gmail'
+            #badge_icon: "numeric-10"
+            
+
+            ScrollView:
+				BoxLayout:
+					id: id_jogo_stats
+					orientation: "vertical"
+
+					canvas:
+						Color:
+							rgba: (1, 1, 1, 1)
+						Rectangle:
+							size: self.size
+							pos: 0, 0
+
+
+
+        MDBottomNavigationItem:
+            name: 'screen 2'
+            text: 'Placares'
+            #icon: 'twitter'
+            #badge_icon: "numeric-5"
+            on_tab_release: app.root.current = "placares_name"
+            #on_tab_release: root.pass_to("inicio_name")
+            #on_tab_release: self.manager.current= "register_name"
+       
+        MDBottomNavigationItem:
+            name: 'screen 3'
+            text: 'Menu'
+            #icon: 'linkedin'
+            on_tab_release: app.root.current = "menu_name"
+
+
+
+<Table>:
+	sizi_hint_y: None
+	height: "90sp"
+
+	Label:
+		id: label_table
+		font_size: 20
+		color: 0, 0, 0, 1
+    
+
+
+
+
+
+<Placares>:
+	MDTopAppBar:
+        id: toolbar
+        title: "MDSwiper"
+        elevation: 4
+        pos_hint: {"top": 1}
+
+	MDSwiper:
+        size_hint_y: None
+        height: root.height - toolbar.height - dp(40)
+        y: root.height - self.height - toolbar.height - dp(20)
+
+        MySwiper:
+
+        MySwiper:
+
+        MySwiper:
+
+        MySwiper:
+
+        MySwiper:
+
+
+
+
+<Menu>:
+	
+
+# classes auxiliares
+
+<AlertErrorSnackbar>:
+
+    MDIconButton:
+        pos_hint: {'center_y': .5}
+        icon: root.icon
+        opposite_colors: True
+
+    MDLabel:
+        id: text_bar
+        size_hint_y: None
+        height: self.texture_size[1]
+        text: root.text
+        font_size: root.font_size
+        theme_text_color: 'Custom'
+        text_color: 'ffffff'
+        shorten: True
+        shorten_from: 'right'
+        pos_hint: {'center_y': .5}
+
+
 
 
 
 
 
 # custom class
+
+<MySwiper@MDSwiperItem>
+	
+	Label:
+		color: 0, 0, 0, 1
+		text: "Futebol"
+
+    #FitImage:
+    #    source: "guitar.png"
+    #    radius: [20,]
+
+
+<DrawerClickableItem@MDNavigationDrawerItem>
+    focus_color: "#e7e4c0"
+    text_color: "#4a4939"
+    icon_color: "#4a4939"
+    ripple_color: "#c5bdd2"
+    selected_color: "#0c6c4d"
+
+
+<DrawerLabelItem@MDNavigationDrawerItem>
+    text_color: "#4a4939"
+    icon_color: "#4a4939"
+    focus_behavior: False
+    selected_color: "#4a4939"
+    _no_ripple_effect: True

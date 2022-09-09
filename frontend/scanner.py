@@ -1,30 +1,48 @@
 ## primeira forma
 
-#from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup
+import requests
+import pandas as pd
 
-#import requests
 
-#html = requests.get("https://www.bet365.com/#/AVR/B146/R^1/").content
+class JogosStats(object):
+    def get(self):
+        html = requests.get("https://www.placardefutebol.com.br/brasileirao-serie-a").content
 
-#soup = BeautifulSoup(html, 'html.parser')
 
-#print(soup.prettify())
+        soup = BeautifulSoup(html, 'html.parser')
+
+
+        # times = soup.select("table thead tr th ")
+        tabela_classificacao = soup.find_all("table", {"class": "table standing-table"})
+        tabela_classificacao_str = str(tabela_classificacao)
+
+        df = pd.read_html(tabela_classificacao_str)[0]
+
+        dic = pd.DataFrame.to_dict(df)
+
+        return dic
+
+# with open("site.txt", "w") as data:
+#     # data.write(soup.prettify())
+#     data.write(str(dic))
+
 
 
 ## segunda forma
 
-from soccerapi.api import Api888Sport
-from soccerapi.api import ApiUnibet
-from soccerapi.api import ApiBet365
+# from soccerapi.api import Api888Sport
+# from soccerapi.api import ApiUnibet
+# from soccerapi.api import ApiBet365
 
-class JogosStats(object):
-    def get(self):
-        api = Api888Sport()
-        url = "https://www.888sport.com/#/filter/football/brazil/serie_a"
-        # url = 'https://www.888sport.com/football/brazil/brazil-serie-a-t-330348/'
-        odds = api.odds(url)
+# class JogosStats(object):
+#     def get(self):
+#         api = Api888Sport()
+#         url = "https://www.888sport.com/#/filter/football/brazil/serie_a"
+#         # url = 'https://www.888sport.com/football/brazil/brazil-serie-a-t-330348/'
+#         odds = api.odds(url)
 
-        return odds
+#         return odds
 
 
 ## outra forma
