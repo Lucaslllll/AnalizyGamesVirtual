@@ -1,30 +1,148 @@
 ## primeira forma
 
-#from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup
+import requests
+from urllib.request import urlopen, build_opener, Request, ProxyHandler, HTTPSHandler
+import ssl
+# import pandas
 
-#import requests
 
-#html = requests.get("https://www.bet365.com/#/AVR/B146/R^1/").content
+class JogosStats(object):
+    times = 0
+    find_two_times_var = False
+    times_cabecalho = 0
+    cabecalho_pass_var = False
+    final_text = []
 
-#soup = BeautifulSoup(html, 'html.parser')
+    def get(self):
+        context = ssl._create_unverified_context()
+        url = "https://www.placardefutebol.com.br/brasileirao-serie-a"
+        # r = urllib.request.urlopen('https://google.com', context=context)
+        html = urlopen(url, context=context).read()
 
-#print(soup.prettify())
+        soup = BeautifulSoup(html, 'html.parser')
+
+
+        # times = soup.select("table thead tr th ")
+        tabela_classificacao = soup.find_all("table", {"class": "table standing-table"})
+        tabela_classificacao_str = str(tabela_classificacao)
+
+        for tags in soup(["script", "style"]):
+            tags.extract()
+
+        text = soup.get_text()
+
+        # print("text cru pelo get_text = "+text)
+
+        new_text = text.rsplit("\n")
+        # new_text = text.rsplit(" ")
+        # print("tamanho"+str(len(new_text)))
+        # print("lista crua = "+str(new_text))
+
+        for i in range(0, len(new_text)-1):
+            if i > len(new_text)-1:
+                continue
+            if new_text[i] == '':
+                continue
+
+
+            self.cabecalho_pass(new_text[i], new_text[i+1])
+            if self.cabecalho_pass_var == False:
+                continue 
+
+            self.find_two_times(new_text[i], new_text[i+1])
+            if self.find_two_times_var == False:
+                self.final_text.append(new_text[i])
+            else:
+                continue
+
+        # self.final_text.pop(0)
+        self.final_text.pop(0)
+        self.final_text.insert(0, "pos")
+
+        # print("final = "+str(self.final_text))
+
+        col = 0
+        dic = {}
+        row = len(self.final_text)/8
+        
+        contador = 0
+        lista = []
+        for e in self.final_text:
+            
+
+            if contador < 8:
+                dic[e] = []
+                lista.append(e)
+            elif col < 8:
+                dic[lista[col]].append(e)
+            elif col >= 8:
+                col = 0
+                dic[lista[col]].append(e)
+                
+# 
+            contador += 1 
+            col += 1
+
+
+        # print("passou pelo for = "+str(dic))
+
+
+        return dic
+
+
+
+    def cabecalho_pass(self, text, text2):
+        if text == "Classificação - Campeonato Brasileiro":
+            self.times_cabecalho += 4
+
+        if self.times_cabecalho >= 4:
+            self.cabecalho_pass_var = True
+
+
+    def find_two_times(self, text, text2):
+
+
+        if text == "Artilheiros - Campeonato Brasileiro":
+            self.times = 2
+
+        if self.times >= 2:
+            self.find_two_times_var = True
+        
+
+stats = JogosStats()
+print(stats.get())
+# stats.get()
+# print("tamanho"+str(len(stats.get())))
+
+
+# df = pandas.read_html(tabela_classificacao_str)[0]
+# dic = pandas.DataFrame.to_dict(df)
+
+
+
+        # return dic
+
+# with open("site.txt", "w") as data:
+#     # data.write(soup.prettify())
+#     data.write(str(dic))
+
 
 
 ## segunda forma
 
-from soccerapi.api import Api888Sport
-from soccerapi.api import ApiUnibet
-from soccerapi.api import ApiBet365
+# from soccerapi.api import Api888Sport
+# from soccerapi.api import ApiUnibet
+# from soccerapi.api import ApiBet365
 
-class JogosStats(object):
-    def get(self):
-        api = Api888Sport()
-        url = "https://www.888sport.com/#/filter/football/brazil/serie_a"
-        # url = 'https://www.888sport.com/football/brazil/brazil-serie-a-t-330348/'
-        odds = api.odds(url)
+# class JogosStats(object):
+#     def get(self):
+#         api = Api888Sport()
+#         url = "https://www.888sport.com/#/filter/football/brazil/serie_a"
+#         # url = 'https://www.888sport.com/football/brazil/brazil-serie-a-t-330348/'
+#         odds = api.odds(url)
 
-        return odds
+#         return odds
 
 
 ## outra forma
@@ -123,3 +241,30 @@ class JogosStats(object):
 # # WebDriverWait(browser, 5).until(EC.presence_of_element_located((inputElement.send_keys(Keys.ENTER))))
 
 # browser.quit()
+
+
+
+
+
+# from urllib.request import urlopen
+# from bs4 import BeautifulSoup
+
+# url = "https://www.placardefutebol.com.br/brasileirao-serie-a"
+# html = urlopen(url).read()
+# soup = BeautifulSoup(html, features="html.parser")
+
+# # kill all script and style elements
+# for script in soup(["script", "style"]):
+#     script.extract()    # rip it out
+
+# # get text
+# text = soup.get_text()
+
+# # break into lines and remove leading and trailing space on each
+# lines = (line.strip() for line in text.splitlines())
+# # break multi-headlines into a line each
+# chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
+# # drop blank lines
+# text = '\n'.join(chunk for chunk in chunks if chunk)
+
+# print(text)

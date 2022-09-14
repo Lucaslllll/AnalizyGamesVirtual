@@ -72,6 +72,8 @@
 		        pos_hint: {"center_y": .5}
 		        pos: id_text_password.width - self.width + dp(8), 0
 		        theme_text_color: "Hint"
+		        text_color: 1, 0, 1, 1
+
 		        on_release:
 		            self.icon = "eye" if self.icon == "eye-off" else "eye-off"
 		            id_text_password.password = False if id_text_password.password is True else True
@@ -253,6 +255,7 @@
                 pos_hint: {"top": 1}
 
             MDSwiper:
+            	id: id_noticias
                 size_hint_y: None
                 height: root.height - toolbar.height - dp(40)
                 y: root.height - self.height - toolbar.height - dp(20)
@@ -266,6 +269,7 @@
                 MySwiper:
 
                 MySwiper:
+
 
         MDBottomNavigationItem:
             name: 'screen 3'
@@ -290,6 +294,38 @@
 
 <Menu>:
 	
+
+	MDSliverAppbar:
+		background_color: "#2d4a50"
+
+		MDSliverAppbarHeader:
+
+		    MDRelativeLayout:
+
+		        FitImage:
+		            source: "images/background-cadastro(0).png"
+
+		MDSliverAppbarContent:
+		    id: content
+		    orientation: "vertical"
+		    padding: "12dp"
+		    spacing: "12dp"
+		    adaptive_height: True	
+
+		    CardItem:
+		    	name_icon: 'help'
+		    	title_change: ''
+				subtitle_change: 'Sobre'
+
+			CardItem:
+		    	name_icon: 'logout'
+		    	title_change: ''
+				subtitle_change: 'Logout'
+				on_release: root.do_logout()
+
+		    	
+
+
 
 # classes auxiliares
 
@@ -319,6 +355,40 @@
 
 
 # custom class
+<CardItem@MDCard>
+	size_hint_y: None
+    height: "86dp"
+    padding: "4dp"
+    #spacing: "10dp"
+    #radius: "10dp" por algum motivo usar como root.radius não funciona e crash o app
+
+    ## vars customs minhas
+    name_icon: 'none' 
+    title_change: 'none'
+    subtitle_change: 'none'
+    
+
+    MDIconButton
+    	id: id_icon
+		icon: root.name_icon
+		radius: "12dp"
+	    size_hint_x: None
+	    width: root.height
+	    pos_hint: {'center_x': .5}
+
+    MDBoxLayout:
+        orientation: "vertical"
+        adaptive_height: True
+        spacing: "6dp"
+        padding: "12dp", 0, 0, 0
+        pos_hint: {"center_y": .5}
+
+        MDLabel:
+        	font_style: "H6"
+            text: root.subtitle_change
+            theme_text_color: "Hint"
+            adaptive_height: True
+            bold: True
 
 <MySwiper@MDSwiperItem>
 	

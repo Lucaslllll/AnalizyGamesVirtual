@@ -69,10 +69,11 @@ class AlertErrorSnackbar(BaseSnackbar):
 class Login(MDScreen):
     path = ""
     dialog = None
+    texto_alert = ""
 
-    def alert_error_connection(self, text="Conexão não estabelecida com o servidor!", *args):
+    def alert_error_connection(self, *args):
         snackbar = AlertErrorSnackbar(
-                text=text,
+                text=self.texto_alert,
                 icon="information",
                 snackbar_x="10dp",
                 snackbar_y="10dp",
@@ -97,10 +98,14 @@ class Login(MDScreen):
             self.ids.load_spinner.active = True
             self.pass_of_login()
         elif user.do_login(email, senha) == None:
+            self.texto_alert = "Conexão não estabelecida com o servidor!"
             Clock.schedule_once(self.alert_error_connection, 4)
 
         else:
-            self.alert_error_connection(text="Usuario ou Senha Errados!")
+            # melhor usar atributo da funcao do que dessa forma abaixo
+            # self.alert_error_connection(texto="Usuario ou Senha Errados!")
+            self.texto_alert = "Usuario ou Senha Errados!"
+            self.alert_error_connection()
 
 
 
@@ -207,7 +212,7 @@ class Registro(MDScreen):
         elif user.do_register(data) == None:
             self.alert_error_connection(text="Conexão não estabelecida com o servidor!")
         else:
-            self.alert_error_connection(text="Email já foi cadastrado")
+            self.alert_error_connection(text="Email já foi cadastrado ou falta de informações")
 
 
     def pass_of_register(self, *args):
@@ -245,26 +250,26 @@ class Inicio(MDScreen):
 
 
         contador = 0
-        for it in jogos["Equipe"].values():
+        for it in jogos["Equipe"]:
             times.append(it)
             contador += 1
 
-        for it in jogos["Pontos"].values():
+        for it in jogos["Pontos"]:
             pontos.append(it)
 
-        for it in jogos["J"].values():
+        for it in jogos["J"]:
             jogos_jogados.append(it)
 
-        for it in jogos["V"].values():
+        for it in jogos["V"]:
             vitorias.append(it)
 
-        for it in jogos["E"].values():
+        for it in jogos["E"]:
             empate.append(it)
 
-        for it in jogos["D"].values():
+        for it in jogos["D"]:
             derrotas.append(it)
 
-        for it in jogos["SG"].values():
+        for it in jogos["SG"]:
             saldo_gols.append(it)
             
 
@@ -279,17 +284,55 @@ class Inicio(MDScreen):
                         )
                     )
 
+    def carregar_noticias(self):
+        pass
+
 
     def on_pre_enter(self):
         self.carregar_jogos()
         self.ids.bottominicio.switch_tab("screen 1")
+        Window.bind(on_request_close=self.confirmacao)
 
     def pass_to(self, name):
         App.get_running_app().root.current = name 
 
     def on_pre_leave(self, *args):
         self.ids.id_jogo_stats.clear_widgets()
+        Window.unbind(on_request_close=self.confirmacao)
         # self.ids.bottominicio.clear_widgets()
+
+            
+
+    def confirmacao(self, *args, **kwargs):
+
+        self.dialog = MDDialog(
+            text="Deseja realmente sair?",
+            md_bg_color=(1,1,1,1),
+            buttons=[
+                MDFlatButton(
+                    text="Não",
+                    theme_text_color="Custom",
+                    text_color=(0,0,0,1),
+                    on_release=self.closeDialog
+                ),
+
+                MDFlatButton(
+                    text="Sair",
+                    theme_text_color="Custom",
+                    text_color=(0,0,0,1),
+                    on_release=App.get_running_app().stop
+                ),
+            ],
+        )
+    
+        self.dialog.open()
+
+        
+        return True
+
+    def closeDialog(self, inst):
+        self.dialog.dismiss()
+
 
 
 class Table(MDBoxLayout):
@@ -303,12 +346,19 @@ class Table(MDBoxLayout):
 
 
 class Menu(MDScreen):
+    path = ''
 
     def on_pre_enter(self):
         Window.bind(on_keyboard=self.voltar)
+        Window.bind(on_request_close=self.voltar_android)
 
     def on_pre_leave(self):
         Window.unbind(on_keyboard=self.voltar)
+        Window.unbind(on_request_close=self.voltar_android)
+
+    def voltar_android(self, *args, **kwargs):
+        App.get_running_app().root.current = "inicio_name"
+        return True
 
     def voltar(self, window, key, *args):
         # esc tem o codigo 27
@@ -317,6 +367,14 @@ class Menu(MDScreen):
             return True
 
         return False
+
+    def do_logout(self):
+        self.path = App.get_running_app().user_data_dir+"/"
+        store = JsonStore(self.path+'data.json')
+        if store.exists('login_auth'):
+            store.put('login_auth', access=False)
+
+        App.get_running_app().root.current = "login_name"
 
     
 # para poder usar MDKivy preciso construir com MDApp

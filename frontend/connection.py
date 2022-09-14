@@ -9,7 +9,7 @@ class Usuario(object):
         valores = {"email": email, "password": password}
 
         try:
-            requisicao = requests.post("http://localhost:8000/session/login", data=valores)
+            requisicao = requests.post("http://localhost:8000/accounts/session/login", data=valores)
         except:
             return None
 
@@ -22,7 +22,7 @@ class Usuario(object):
     def buscar_dados(self):
 
         try:
-            request = requests.get("http://localhost:8000/usuario")
+            request = requests.get("http://localhost:8000/accounts/usuario/")
         except:
             return None
 
@@ -39,7 +39,7 @@ class Usuario(object):
         #print(data)
         
         try:
-            requisicao = requests.post("http://localhost:8000/usuario/", data=data)
+            requisicao = requests.post("http://localhost:8000/accounts/usuario/", data=data)
         except:
             return None
 
