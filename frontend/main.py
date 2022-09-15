@@ -14,6 +14,7 @@ from kivy.core.audio import SoundLoader
 from kivy.clock import Clock
 from kivy.storage.jsonstore import JsonStore
 
+Window.softinput_mode = 'pan'
 
 
 # kivymd imports
@@ -31,6 +32,8 @@ import json
 from PIL import Image
 from connection import Usuario
 from scanner import JogosStats
+
+
 
 
 class Gerenciador(MDScreenManager):
@@ -94,18 +97,16 @@ class Login(MDScreen):
 
 
         user = Usuario()
-        if user.do_login(email, senha):
+        resposta = user.do_login(email, senha)
+        if type(resposta) is dict:
             self.ids.load_spinner.active = True
             self.pass_of_login()
-        elif user.do_login(email, senha) == None:
-            self.texto_alert = "Conexão não estabelecida com o servidor!"
-            Clock.schedule_once(self.alert_error_connection, 4)
-
         else:
             # melhor usar atributo da funcao do que dessa forma abaixo
             # self.alert_error_connection(texto="Usuario ou Senha Errados!")
-            self.texto_alert = "Usuario ou Senha Errados!"
-            self.alert_error_connection()
+            self.texto_alert = resposta
+            Clock.schedule_once(self.alert_error_connection, 4)
+            # self.alert_error_connection()
 
 
 

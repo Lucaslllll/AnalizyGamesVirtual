@@ -136,6 +136,7 @@
 
 
 		ScrollView:
+		
 			BoxLayout:
 				id: register_id
 				orientation: "vertical"
@@ -371,10 +372,11 @@
     MDIconButton
     	id: id_icon
 		icon: root.name_icon
-		radius: "12dp"
+		#radius: "12dp"
 	    size_hint_x: None
+	    size_hint_y: None
 	    width: root.height
-	    pos_hint: {'center_x': .5}
+	    pos_hint: {'center_x': .5, 'center_y': .5}
 
     MDBoxLayout:
         orientation: "vertical"
