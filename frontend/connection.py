@@ -7,7 +7,7 @@ class Authenticat(object):
         self.token_access = None
         self.token_refresh = None
 
-    def do_auth(self, email, password):
+    def do_auth(self):
         valores = {
             "username":"admin",
             "password":"root1234"
@@ -64,7 +64,7 @@ class Usuario(object):
         valores = {"email": email, "password": password}
 
         auth = Authenticat()
-        resposta = auth.do_auth(email, password)
+        resposta = auth.do_auth()
         
         if resposta == True:
             self.token_access = auth.get_token()
@@ -131,3 +131,38 @@ class Usuario(object):
         # print(requisicao.content)
         return False
 
+
+class Noticias(object):
+    token_access = None
+    token_refresh = None
+
+    def get(self):
+        auth = Authenticat()
+        resposta = auth.do_auth()
+
+
+        if resposta == True:
+            self.token_access = auth.get_token()
+            self.token_refresh = auth.get_token_refresh()
+            head = {'Authorization': 'Bearer {}'.format(self.token_access)}
+
+            try:
+                request = requests.get("http://localhost:8000/noticias", headers=head)
+            except:
+                return "Error ao Fazer Requisição ao Servidor"
+
+            if request.status_code == 200:
+                return request.json()
+            elif request.status_code == 401:
+                return "Sem Autorização"
+            else:
+                return "Erro Inesperado"
+        elif resposta == False:
+            return "Credencias Inválidas"
+        else:
+            return "Problemas em contatar o servidor!"
+
+news = Noticias()
+
+print(news.get())
+print(news.token_access)

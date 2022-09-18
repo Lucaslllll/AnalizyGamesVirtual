@@ -261,15 +261,8 @@
                 height: root.height - toolbar.height - dp(40)
                 y: root.height - self.height - toolbar.height - dp(20)
 
-                MySwiper:
 
-                MySwiper:
-
-                MySwiper:
-
-                MySwiper:
-
-                MySwiper:
+                
 
 
         MDBottomNavigationItem:
@@ -290,7 +283,53 @@
 		color: 0, 0, 0, 1
     
 
+<MySwiper>:
+	id: swiper_noticias
+	
 
+    FitImage:
+    	id: id_label_imagens
+        source: "none.png"
+        radius: [20,]
+        size_hint_y: None
+        height: root.height-100
+        pos_hint: {'center_y': .5}
+
+    
+    ScrollView:
+	    MDBoxLayout:
+	    	orientation: "vertical"
+	    	size_hint_y: None
+			height: root.ids.id_label_imagens.height
+			size_hint_x: None
+			width: root.ids.id_label_imagens.width
+			#spacing: "80dp"
+			#post_hint: {'center_y': .5}	
+			
+			MDLabel:
+				id: id_label_noticias
+				color: 0, 0, 0, 1
+				text: "Futebol"
+				#font_size: "30sp"
+				size: self.texture_size
+				text_size: dp(2), dp(1)
+
+
+			MDLabel:
+				id: id_noticias_descricao
+				color: 0, 0, 0, 1
+				text: "Detalhes"
+				#font_size: "30sp"
+				size: self.texture_size
+				text_size: dp(2), dp(1)
+
+			MDFlatButton:
+				id: id_mais
+			    text: "Ler Mais"
+			    theme_text_color: "Custom"
+			    md_bg_color: 0.1, 0.2, 0.5, 1
+			    text_color: 1, 1, 1, 1
+			    
 
 
 <Menu>:
@@ -392,15 +431,6 @@
             adaptive_height: True
             bold: True
 
-<MySwiper@MDSwiperItem>
-	
-	Label:
-		color: 0, 0, 0, 1
-		text: "Futebol"
-
-    #FitImage:
-    #    source: "guitar.png"
-    #    radius: [20,]
 
 
 <DrawerClickableItem@MDNavigationDrawerItem>

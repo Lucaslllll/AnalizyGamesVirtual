@@ -4,7 +4,8 @@ from bs4 import BeautifulSoup
 import requests
 from urllib.request import urlopen, build_opener, Request, ProxyHandler, HTTPSHandler
 import ssl
-# import pandas
+# import pandas de alguma forma o android não tem alguma lib c++ 
+# necessária para a utilização do pandas
 
 
 class JogosStats(object):
@@ -23,7 +24,6 @@ class JogosStats(object):
         soup = BeautifulSoup(html, 'html.parser')
 
 
-        # times = soup.select("table thead tr th ")
         tabela_classificacao = soup.find_all("table", {"class": "table standing-table"})
         tabela_classificacao_str = str(tabela_classificacao)
 
@@ -35,8 +35,7 @@ class JogosStats(object):
         # print("text cru pelo get_text = "+text)
 
         new_text = text.rsplit("\n")
-        # new_text = text.rsplit(" ")
-        # print("tamanho"+str(len(new_text)))
+
         # print("lista crua = "+str(new_text))
 
         for i in range(0, len(new_text)-1):
@@ -56,7 +55,7 @@ class JogosStats(object):
             else:
                 continue
 
-        # self.final_text.pop(0)
+        
         self.final_text.pop(0)
         self.final_text.insert(0, "pos")
 
@@ -80,7 +79,6 @@ class JogosStats(object):
                 col = 0
                 dic[lista[col]].append(e)
                 
-# 
             contador += 1 
             col += 1
 
@@ -110,8 +108,8 @@ class JogosStats(object):
             self.find_two_times_var = True
         
 
-stats = JogosStats()
-print(stats.get())
+# stats = JogosStats()
+# print(stats.get())
 # stats.get()
 # print("tamanho"+str(len(stats.get())))
 

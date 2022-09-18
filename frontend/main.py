@@ -26,11 +26,12 @@ from kivymd.uix.widget import MDWidget
 from kivymd.uix.snackbar import BaseSnackbar
 from kivymd.uix.button import MDFlatButton
 from kivymd.uix.dialog import MDDialog
+from kivymd.uix.swiper.swiper import MDSwiperItem
 
 
 import json
 from PIL import Image
-from connection import Usuario
+from connection import Usuario, Noticias
 from scanner import JogosStats
 
 
@@ -228,6 +229,7 @@ class Inicio(MDScreen):
     def __init__(self, **kwargs):
         super(Inicio, self).__init__(kwargs)
         self.carregar_jogos()
+        self.carregar_noticias()
 
 
     def carregar_jogos(self):
@@ -286,11 +288,19 @@ class Inicio(MDScreen):
                     )
 
     def carregar_noticias(self):
-        pass
-
+        news = Noticias().get()
+        print(type(news))
+        if type(news) is list:
+            for n in news: 
+                self.ids.id_noticias.add_widget(
+                    MySwiper(text=n["title"], url=n["thumb"], detalhes=n["details"])
+                )
+        
+        
 
     def on_pre_enter(self):
         self.carregar_jogos()
+        self.carregar_noticias()
         self.ids.bottominicio.switch_tab("screen 1")
         Window.bind(on_request_close=self.confirmacao)
 
@@ -299,6 +309,8 @@ class Inicio(MDScreen):
 
     def on_pre_leave(self, *args):
         self.ids.id_jogo_stats.clear_widgets()
+        self.ids.bottominicio.clear_widgets()
+        # print(self.ids)
         Window.unbind(on_request_close=self.confirmacao)
         # self.ids.bottominicio.clear_widgets()
 
@@ -341,7 +353,12 @@ class Table(MDBoxLayout):
         super().__init__(**kwargs)
         self.ids.label_table.text = text
 
-
+class MySwiper(MDSwiperItem):
+    def __init__(self, text='futebol', url='none.png', detalhes="detalhes", **kwargs):
+        super().__init__(**kwargs)
+        self.ids.id_label_noticias.text = text
+        self.ids.id_label_imagens.source = url
+        self.ids.id_noticias_descricao.text = detalhes
 ## fim de inicio
 
 
