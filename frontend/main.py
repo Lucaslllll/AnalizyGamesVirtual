@@ -39,8 +39,9 @@ from scanner import JogosStats
 
 class Gerenciador(MDScreenManager):
     dados_user = {}
-    userON = True
+    Admin_is = False
     path = ""
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.path = App.get_running_app().user_data_dir+"/"
@@ -101,6 +102,8 @@ class Login(MDScreen):
         resposta = user.do_login(email, senha)
         if type(resposta) is dict:
             self.ids.load_spinner.active = True
+            App.get_running_app().root.Admin_is = user['admin']
+        
             self.pass_of_login()
         else:
             # melhor usar atributo da funcao do que dessa forma abaixo
@@ -276,7 +279,7 @@ class Inicio(MDScreen):
             saldo_gols.append(it)
             
 
-
+        print(saldo_gols)
         for i in range(contador): 
             
             self.ids.id_jogo_stats.add_widget(
@@ -385,6 +388,10 @@ class Menu(MDScreen):
             return True
 
         return False
+
+    def is_admin(self):
+
+        self.ids.content
 
     def do_logout(self):
         self.path = App.get_running_app().user_data_dir+"/"

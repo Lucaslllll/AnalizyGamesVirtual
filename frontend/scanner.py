@@ -38,18 +38,18 @@ class JogosStats(object):
 
         # print("lista crua = "+str(new_text))
 
-        for i in range(0, len(new_text)-1):
+        for i in range(0, len(new_text)):
             if i > len(new_text)-1:
                 continue
             if new_text[i] == '':
                 continue
 
 
-            self.cabecalho_pass(new_text[i], new_text[i+1])
+            self.cabecalho_pass(new_text[i])
             if self.cabecalho_pass_var == False:
                 continue 
 
-            self.find_two_times(new_text[i], new_text[i+1])
+            self.find_two_times(new_text[i])
             if self.find_two_times_var == False:
                 self.final_text.append(new_text[i])
             else:
@@ -59,7 +59,7 @@ class JogosStats(object):
         self.final_text.pop(0)
         self.final_text.insert(0, "pos")
 
-        # print("final = "+str(self.final_text))
+        print("final = "+str(self.final_text))
 
         col = 0
         dic = {}
@@ -90,7 +90,7 @@ class JogosStats(object):
 
 
 
-    def cabecalho_pass(self, text, text2):
+    def cabecalho_pass(self, text):
         if text == "Classificação - Campeonato Brasileiro":
             self.times_cabecalho += 4
 
@@ -98,7 +98,7 @@ class JogosStats(object):
             self.cabecalho_pass_var = True
 
 
-    def find_two_times(self, text, text2):
+    def find_two_times(self, text):
 
 
         if text == "Artilheiros - Campeonato Brasileiro":
