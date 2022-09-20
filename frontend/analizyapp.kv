@@ -210,7 +210,7 @@
         panel_color: "#27de4e"
         selected_color_background: "orange"
         text_color_active: "lightgrey"
-
+        current: "screen 2"
 
         MDBottomNavigationItem:
             name: 'screen 1'
@@ -254,6 +254,7 @@
                 title: "MDSwiper"
                 elevation: 4
                 pos_hint: {"top": 1}
+                md_bg_color: "#f5a823"
 
             MDSwiper:
             	id: id_noticias
@@ -271,7 +272,7 @@
             icon: 'menu'
             on_tab_release: app.root.current = "menu_name"
 
-
+           
 
 <Table>:
 	sizi_hint_y: None
@@ -353,10 +354,6 @@
 		    adaptive_height: True	
 
 		    
-		    CardItem:
-		    	name_icon: 'office-building-cog'
-		    	title_change: ''
-				subtitle_change: 'Admin'
 
 		    CardItem:
 		    	name_icon: 'help'
@@ -368,6 +365,13 @@
 		    	title_change: ''
 				subtitle_change: 'Logout'
 				on_release: root.do_logout()
+
+			CardItem:
+		    	name_icon: 'arrow-left-bottom-bold'
+		    	title_change: ''
+				subtitle_change: 'Voltar'
+				on_release: root.voltar_android()
+
 
 		    	
 
@@ -395,7 +399,33 @@
         pos_hint: {'center_y': .5}
 
 
+<CardItemMenuAdmin>:
+	id: cardAdmin
+	size_hint_y: None
+    height: "86dp"
+    padding: "4dp"
 
+    MDIconButton
+    	id: id_icon
+		icon: "office-building-cog"
+		size_hint_x: None
+	    size_hint_y: None
+	    width: root.height
+	    pos_hint: {'center_x': .5, 'center_y': .5}
+
+    MDBoxLayout:
+        orientation: "vertical"
+        adaptive_height: True
+        spacing: "6dp"
+        padding: "12dp", 0, 0, 0
+        pos_hint: {"center_y": .5}
+
+        MDLabel:
+        	font_style: "H6"
+            text: "Admin"
+            theme_text_color: "Hint"
+            adaptive_height: True
+            bold: True
 
 
 
@@ -412,6 +442,7 @@
     name_icon: 'none' 
     title_change: 'none'
     subtitle_change: 'none'
+    
     
 
     MDIconButton

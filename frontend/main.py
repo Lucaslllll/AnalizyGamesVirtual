@@ -27,6 +27,7 @@ from kivymd.uix.snackbar import BaseSnackbar
 from kivymd.uix.button import MDFlatButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.swiper.swiper import MDSwiperItem
+from kivymd.uix.card.card import MDCard
 
 
 import json
@@ -39,7 +40,6 @@ from scanner import JogosStats
 
 class Gerenciador(MDScreenManager):
     dados_user = {}
-    Admin_is = False
     path = ""
 
     def __init__(self, **kwargs):
@@ -102,8 +102,12 @@ class Login(MDScreen):
         resposta = user.do_login(email, senha)
         if type(resposta) is dict:
             self.ids.load_spinner.active = True
-            App.get_running_app().root.Admin_is = user['admin']
-        
+            path = App.get_running_app().user_data_dir+"/"
+            
+
+            store = JsonStore(self.path+"data.json")
+            store.put('admiro', permission=resposta['dados']['admin'])
+
             self.pass_of_login()
         else:
             # melhor usar atributo da funcao do que dessa forma abaixo
@@ -233,18 +237,13 @@ class Inicio(MDScreen):
         super(Inicio, self).__init__(kwargs)
         self.carregar_jogos()
         self.carregar_noticias()
-
+        self.ids.bottominicio.switch_tab("screen 1")
 
     def carregar_jogos(self):
         scan = JogosStats()
 
         jogos = scan.get()
 
-        # self.ids.box.add_widget(Tarefa(text=tarefa))
-        
-
-
-        #print(lista)
         times = []
         equipes = []
         pontos = []
@@ -279,7 +278,7 @@ class Inicio(MDScreen):
             saldo_gols.append(it)
             
 
-        print(saldo_gols)
+        
         for i in range(contador): 
             
             self.ids.id_jogo_stats.add_widget(
@@ -313,9 +312,8 @@ class Inicio(MDScreen):
     def on_pre_leave(self, *args):
         self.ids.id_jogo_stats.clear_widgets()
         self.ids.bottominicio.clear_widgets()
-        # print(self.ids)
         Window.unbind(on_request_close=self.confirmacao)
-        # self.ids.bottominicio.clear_widgets()
+        
 
             
 
@@ -367,7 +365,11 @@ class MySwiper(MDSwiperItem):
 
 
 class Menu(MDScreen):
-    path = ''
+    def __init__(self, **kwargs):
+        super(Menu, self).__init__(kwargs)
+        path = ''
+        self.is_admin()
+
 
     def on_pre_enter(self):
         Window.bind(on_keyboard=self.voltar)
@@ -376,6 +378,15 @@ class Menu(MDScreen):
     def on_pre_leave(self):
         Window.unbind(on_keyboard=self.voltar)
         Window.unbind(on_request_close=self.voltar_android)
+
+        # self.path = App.get_running_app().user_data_dir+"/"
+        # store = JsonStore(self.path+"data.json")
+        # if store.exists('admiro'):
+        #     if store.get('admiro')['permission'] == True:
+        #         self.ids.content.remove_widget(self.ids.cardAdmin)
+        # de alguma forma self.ids não grava o id da classe CardItemMenu Admin
+        # minha teoria é que o id é gravado depois de ser adicionados a var self.ids
+
 
     def voltar_android(self, *args, **kwargs):
         App.get_running_app().root.current = "inicio_name"
@@ -389,9 +400,14 @@ class Menu(MDScreen):
 
         return False
 
-    def is_admin(self):
 
-        self.ids.content
+    def is_admin(self):
+        self.path = App.get_running_app().user_data_dir+"/"
+
+        store = JsonStore(self.path+"data.json")
+        if store.exists('admiro'):
+            if store.get('admiro')['permission'] == True:
+                self.ids.content.add_widget(CardItemMenuAdmin())
 
     def do_logout(self):
         self.path = App.get_running_app().user_data_dir+"/"
@@ -400,6 +416,15 @@ class Menu(MDScreen):
             store.put('login_auth', access=False)
 
         App.get_running_app().root.current = "login_name"
+
+
+
+
+
+class CardItemMenuAdmin(MDCard):
+    pass
+
+
 
     
 # para poder usar MDKivy preciso construir com MDApp
