@@ -14,8 +14,6 @@ from kivy.core.audio import SoundLoader
 from kivy.clock import Clock
 from kivy.storage.jsonstore import JsonStore
 
-Window.softinput_mode = 'pan'
-
 
 # kivymd imports
 from kivymd.app import MDApp
@@ -28,7 +26,8 @@ from kivymd.uix.button import MDFlatButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.swiper.swiper import MDSwiperItem
 from kivymd.uix.card.card import MDCard
-
+from kivymd.uix.menu import MDDropdownMenu
+from kivymd.uix.snackbar import Snackbar
 
 import json
 from PIL import Image
@@ -36,20 +35,27 @@ from connection import Usuario, Noticias
 from scanner import JogosStats
 
 
+Window.softinput_mode = 'pan'
+from kivy.config import Config
+Config.set('kivy', 'keyboard_mode', 'systemandmulti')
+
+
 
 
 class Gerenciador(MDScreenManager):
-    dados_user = {}
     path = ""
+    admin_is = False
+    noticia_atual = None
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.path = App.get_running_app().user_data_dir+"/"
-        print(self.path)
+        
+            
         store = JsonStore(self.path+"data.json")
         if store.exists('login_auth'):
             if store.get('login_auth')['access'] == True:
-                self.current = "inicio_name"
+                self.current = "admin_name"
 
 
 
@@ -100,14 +106,14 @@ class Login(MDScreen):
 
         user = Usuario()
         resposta = user.do_login(email, senha)
+
         if type(resposta) is dict:
             self.ids.load_spinner.active = True
-            path = App.get_running_app().user_data_dir+"/"
+
+            self.path = App.get_running_app().user_data_dir+"/"
+            store = JsonStore(self.path+'data.json')
+            store.put('user', id=resposta['dados']['id'])    
             
-
-            store = JsonStore(self.path+"data.json")
-            store.put('admiro', permission=resposta['dados']['admin'])
-
             self.pass_of_login()
         else:
             # melhor usar atributo da funcao do que dessa forma abaixo
@@ -227,91 +233,122 @@ class Registro(MDScreen):
     def pass_of_register(self, *args):
         App.get_running_app().root.current = "login_name"
 
+    def on_pre_enter(self):
+        Window.bind(on_keyboard=self.voltar)
+        Window.bind(on_request_close=self.voltar_android)
+
+    def on_pre_leave(self):
+        Window.unbind(on_keyboard=self.voltar)
+        Window.unbind(on_request_close=self.voltar_android)
+
+
+    def voltar_android(self, *args, **kwargs):
+        App.get_running_app().root.current = "login_name"
+        return True
+
+    def voltar(self, window, key, *args):
+        # esc tem o codigo 27
+        if key == 27:
+            App.get_running_app().root.current = "login_name"
+            return True
+
+        return False
 
 
 ## inicio
 
 class Inicio(MDScreen):
 
-    def __init__(self, **kwargs):
-        super(Inicio, self).__init__(kwargs)
-        self.carregar_jogos()
-        self.carregar_noticias()
-        self.ids.bottominicio.switch_tab("screen 1")
-
+        
     def carregar_jogos(self):
         scan = JogosStats()
 
         jogos = scan.get()
 
-        times = []
-        equipes = []
-        pontos = []
-        jogos_jogados = []
-        vitorias = []
-        empate = []
-        derrotas = []
-        saldo_gols = []
+        if len(jogos) != 0:
+
+            times = ['Equipe']
+            pontos = ['Pontos']
+            jogos_jogados = ['J']
+            vitorias = ['V']
+            empate = ['E']
+            derrotas = ['D']
+            saldo_gols = ['SG']
 
 
-        contador = 0
-        for it in jogos["Equipe"]:
-            times.append(it)
-            contador += 1
+            contador = len(jogos["Equipe"])
 
-        for it in jogos["Pontos"]:
-            pontos.append(it)
+            for it in jogos["Equipe"]:
+                times.append(it)
 
-        for it in jogos["J"]:
-            jogos_jogados.append(it)
+            for it in jogos["Pontos"]:
+                pontos.append(it)
 
-        for it in jogos["V"]:
-            vitorias.append(it)
+            for it in jogos["J"]:
+                jogos_jogados.append(it)
 
-        for it in jogos["E"]:
-            empate.append(it)
+            for it in jogos["V"]:
+                vitorias.append(it)
 
-        for it in jogos["D"]:
-            derrotas.append(it)
+            for it in jogos["E"]:
+                empate.append(it)
 
-        for it in jogos["SG"]:
-            saldo_gols.append(it)
-            
+            for it in jogos["D"]:
+                derrotas.append(it)
 
-        
-        for i in range(contador): 
-            
-            self.ids.id_jogo_stats.add_widget(
-                    Table(
-                        text=str(times[i])+" | "+str(pontos[i])+" | "+str(jogos_jogados[i])+" | "+str(vitorias[i])
-                        +" | "+str(empate[i])+" | "+str(derrotas[i])+" | "+str(saldo_gols[i])
-                                    
+            for it in jogos["SG"]:
+                saldo_gols.append(it)
+                
+
+            for i in range(0, contador+1): 
+                self.ids.id_jogo_stats.add_widget(
+                        Table(
+                            text=str(times[i])+" | "+str(pontos[i])+" | "+str(jogos_jogados[i])+" | "+str(vitorias[i])
+                            +" | "+str(empate[i])+" | "+str(derrotas[i])+" | "+str(saldo_gols[i])
+                                        
+                            )
                         )
-                    )
 
     def carregar_noticias(self):
         news = Noticias().get()
-        print(type(news))
         if type(news) is list:
             for n in news: 
                 self.ids.id_noticias.add_widget(
-                    MySwiper(text=n["title"], url=n["thumb"], detalhes=n["details"])
+                    MySwiper(text=n["title"], url=n["thumb"], detalhes=n["preview"], id_noticia=n['id'])
                 )
-        
-        
+    
+    def ir_noticia(self, id_noticia):
+        App.get_running_app().root.noticia_atual = id_noticia
+        App.get_running_app().root.current = "noticia_name"
+
+     
 
     def on_pre_enter(self):
         self.carregar_jogos()
         self.carregar_noticias()
         self.ids.bottominicio.switch_tab("screen 1")
         Window.bind(on_request_close=self.confirmacao)
+        # self.ids.update({child.id:child for child in self.children})
+        # print(self.ids.id_noticias.children)
 
     def pass_to(self, name):
+        store = JsonStore(App.get_running_app().user_data_dir+"/data.json")
+        if store.exists('user'):
+            user = Usuario().buscar_dados(pk=store.get('user')['id'])
+        
+            if type(user) is dict: 
+                App.get_running_app().root.admin_is = user['admin']
+
+
         App.get_running_app().root.current = name 
+        
+
 
     def on_pre_leave(self, *args):
         self.ids.id_jogo_stats.clear_widgets()
-        self.ids.bottominicio.clear_widgets()
+        for child in self.ids.id_noticias.children:
+            child.clear_widgets()
+        
         Window.unbind(on_request_close=self.confirmacao)
         
 
@@ -355,29 +392,104 @@ class Table(MDBoxLayout):
         self.ids.label_table.text = text
 
 class MySwiper(MDSwiperItem):
-    def __init__(self, text='futebol', url='none.png', detalhes="detalhes", **kwargs):
+    def __init__(self, text='futebol', url='none.png', detalhes="detalhes", id_noticia=None, **kwargs):
         super().__init__(**kwargs)
         self.ids.id_label_noticias.text = text
         self.ids.id_label_imagens.source = url
         self.ids.id_noticias_descricao.text = detalhes
+        if id_noticia != None: 
+            self.id_da_noticia = id_noticia
+
+
 ## fim de inicio
 
 
+class Noticia(MDScreen):
 
-class Menu(MDScreen):
     def __init__(self, **kwargs):
-        super(Menu, self).__init__(kwargs)
-        path = ''
-        self.is_admin()
+        super().__init__(**kwargs)
+
+        menu_items = [
+            {
+                "viewclass": "OneLineListItem",
+                "text": "Home",
+                "height": 56,
+                "on_release": lambda x="Home": self.menu_callback("inicio_name"),
+            },
+            {
+                "viewclass": "OneLineListItem",
+                "text": "Menu",
+                "height": 56,
+                "on_release": lambda x="Menu": self.menu_callback("menu_name"),
+            }
+
+        ]
+        self.menu = MDDropdownMenu(
+            items=menu_items,
+            width_mult=4,
+        )
+
+
+    def DropApp(self, instance_action_top_appbar_button):
+        self.menu.caller = instance_action_top_appbar_button
+        self.menu.open()
+    
+    def menu_callback(self, text_item):
+        self.menu.dismiss()
+        App.get_running_app().root.current = text_item
 
 
     def on_pre_enter(self):
+        id_da_noticia = App.get_running_app().root.noticia_atual
+        news = Noticias().get(id_noticia=id_da_noticia)
+        if type(news) is dict:
+            self.ids.title_noticia.text = news['title']
+            self.ids.details_noticia.text = news['details']
+
         Window.bind(on_keyboard=self.voltar)
         Window.bind(on_request_close=self.voltar_android)
 
     def on_pre_leave(self):
         Window.unbind(on_keyboard=self.voltar)
         Window.unbind(on_request_close=self.voltar_android)
+
+    def voltar_android(self, *args, **kwargs):
+        App.get_running_app().root.current = "inicio_name"
+        return True
+
+    def voltar(self, window, key, *args):
+        # esc tem o codigo 27
+        if key == 27:
+            App.get_running_app().root.current = "inicio_name"
+            return True
+
+        return False
+
+
+
+## menu
+
+class CustomDropMenu(MDDropdownMenu):
+    pass
+
+
+class Menu(MDScreen):
+    def __init__(self, **kwargs):
+        super(Menu, self).__init__(**kwargs)
+        path = ''
+        
+
+
+    def on_pre_enter(self):
+        Window.bind(on_keyboard=self.voltar)
+        Window.bind(on_request_close=self.voltar_android)
+        self.is_admin()
+
+    def on_pre_leave(self):
+        Window.unbind(on_keyboard=self.voltar)
+        Window.unbind(on_request_close=self.voltar_android)
+        if App.get_running_app().root.admin_is == True:
+            self.ids.content.remove_widget(self.ids.content.children[0])
 
         # self.path = App.get_running_app().user_data_dir+"/"
         # store = JsonStore(self.path+"data.json")
@@ -401,13 +513,10 @@ class Menu(MDScreen):
         return False
 
 
-    def is_admin(self):
-        self.path = App.get_running_app().user_data_dir+"/"
+    def is_admin(self):    
+        if App.get_running_app().root.admin_is == True:
+            self.ids.content.add_widget(CardItemMenuAdmin())
 
-        store = JsonStore(self.path+"data.json")
-        if store.exists('admiro'):
-            if store.get('admiro')['permission'] == True:
-                self.ids.content.add_widget(CardItemMenuAdmin())
 
     def do_logout(self):
         self.path = App.get_running_app().user_data_dir+"/"
@@ -419,15 +528,23 @@ class Menu(MDScreen):
 
 
 
-
-
 class CardItemMenuAdmin(MDCard):
     pass
 
+# fim do menu
+
+
+## admin
+
+class Admin(MDScreen):
+    pass
+
+
+# fim do admin
 
 
     
-# para poder usar MDKivy preciso construir com MDApp
+# para poder usar MDKivy preciso construir com MDApp inves de App do kivy
 class AnalizyApp(MDApp):
     def build(self):
         return Gerenciador()

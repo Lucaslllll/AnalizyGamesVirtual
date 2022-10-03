@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 
 
 class UsuarioViewSet(viewsets.ModelViewSet):
-    # permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated, )
 
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
@@ -33,7 +33,8 @@ class LoginAPI(generics.GenericAPIView):
                             "id": userOb.id,
                             "first_name": userOb.first_name,
                             "last_name": userOb.last_name,
-                            "email" : userOb.email
+                            "email" : userOb.email,
+                            "admin" : userOb.admin,
                         
                         })
 

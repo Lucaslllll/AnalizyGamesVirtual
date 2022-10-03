@@ -9,7 +9,7 @@ from .models import Usuario
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
-        fields = '__all__'
+        exclude = ('password', 'date_expiration', )
 
     def validate_password(self, data):
         value = make_password(password=data, salt=None, hasher='pbkdf2_sha256')

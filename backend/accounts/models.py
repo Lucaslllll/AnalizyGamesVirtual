@@ -9,3 +9,4 @@ class Usuario(models.Model):
 	password = models.CharField(max_length=255)
 	active = models.BooleanField(default=False)
 	date_expiration = models.DateTimeField(null=True, blank=True)
+	admin = models.BooleanField(default=False, null=True)

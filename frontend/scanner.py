@@ -9,18 +9,25 @@ import ssl
 
 
 class JogosStats(object):
-    times = 0
-    find_two_times_var = False
-    times_cabecalho = 0
-    cabecalho_pass_var = False
-    final_text = []
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.times = 0
+        self.find_two_times_var = False
+        self.times_cabecalho = 0
+        self.cabecalho_pass_var = False
+        self.final_text = []
+
 
     def get(self):
         context = ssl._create_unverified_context()
         url = "https://www.placardefutebol.com.br/brasileirao-serie-a"
         # r = urllib.request.urlopen('https://google.com', context=context)
-        html = urlopen(url, context=context).read()
-
+        
+        try:
+            html = urlopen(url, context=context).read()
+        except:
+            return {}
+            
         soup = BeautifulSoup(html, 'html.parser')
 
 
@@ -59,7 +66,7 @@ class JogosStats(object):
         self.final_text.pop(0)
         self.final_text.insert(0, "pos")
 
-        print("final = "+str(self.final_text))
+        # print("final = "+str(self.final_text))
 
         col = 0
         dic = {}
@@ -84,7 +91,8 @@ class JogosStats(object):
 
 
         # print("passou pelo for = "+str(dic))
-
+        # print("============================")
+        # print(dic)
 
         return dic
 
