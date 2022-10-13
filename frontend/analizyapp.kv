@@ -444,18 +444,125 @@
 
             right_action_items: 
                 [
-                ["magnify", lambda x: None],
+                ["magnify", lambda x: root.SearchApp(x)],
                 ]
+
             
 
         ScrollView:
 
             MDBoxLayout:
-                orientation: "vertical"
-                size_hint_y: None
+                adaptive_height: True
+                size_hint: None, None
+                width: self.minimum_width
                 height: self.minimum_height
-                spacing: "200dp"
-                padding: "20dp"
+
+                MDCard:
+                    padding: 4
+                    size_hint: None, None
+                    size: "200dp", "100dp"
+                    md_bg_color: 0, 0.1, 0.8, 1                        
+
+                    MDRelativeLayout:
+
+                        MDIconButton:
+                            icon: "information"
+                            pos_hint: {"top": 1, "right": 1}
+
+                        MDLabel:
+                            id: label
+                            adaptive_size: True
+                            text: "Card"
+                            color: 1, 1, 1, 1
+                            pos: "12dp", "12dp"
+                            bold: True
+
+                MDCard:
+                    padding: 4
+                    size_hint: None, None
+                    size: "200dp", "100dp"
+                    md_bg_color: 0, 0.1, 0.8, 1                        
+
+                    MDRelativeLayout:
+
+                        MDIconButton:
+                            icon: "information"
+                            pos_hint: {"top": 1, "right": 1}
+
+                        MDLabel:
+                            id: label
+                            adaptive_size: True
+                            text: "Card"
+                            color: 1, 1, 1, 1
+                            pos: "12dp", "12dp"
+                            bold: True
+
+
+                MDCard:
+                    padding: 4
+                    size_hint: None, None
+                    size: "200dp", "100dp"
+                    md_bg_color: 0, 0.1, 0.8, 1                        
+
+                    MDRelativeLayout:
+
+                        MDIconButton:
+                            icon: "information"
+                            pos_hint: {"top": 1, "right": 1}
+
+                        MDLabel:
+                            id: label
+                            adaptive_size: True
+                            text: "Card"
+                            color: 1, 1, 1, 1
+                            pos: "12dp", "12dp"
+                            bold: True
+
+
+                MDCard:
+                    padding: 4
+                    size_hint: None, None
+                    size: "200dp", "100dp"
+                    md_bg_color: 0, 0.1, 0.8, 1                        
+
+                    MDRelativeLayout:
+
+                        MDIconButton:
+                            icon: "information"
+                            pos_hint: {"top": 1, "right": 1}
+
+                        MDLabel:
+                            id: label
+                            adaptive_size: True
+                            text: "Card"
+                            color: 1, 1, 1, 1
+                            pos: "12dp", "12dp"
+                            bold: True
+
+
+                MDCard:
+                    padding: 4
+                    size_hint: None, None
+                    size: "200dp", "100dp"
+                    md_bg_color: 0, 0.1, 0.8, 1                        
+
+                    MDRelativeLayout:
+
+                        MDIconButton:
+                            icon: "information"
+                            pos_hint: {"top": 1, "right": 1}
+
+                        MDLabel:
+                            id: label
+                            adaptive_size: True
+                            text: "Card"
+                            color: 1, 1, 1, 1
+                            pos: "12dp", "12dp"
+                            bold: True
+
+
+
+
 
 
 # classes auxiliares

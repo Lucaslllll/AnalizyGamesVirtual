@@ -28,6 +28,7 @@ from kivymd.uix.swiper.swiper import MDSwiperItem
 from kivymd.uix.card.card import MDCard
 from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.snackbar import Snackbar
+from kivymd.uix.textfield.textfield import MDTextField
 
 import json
 from PIL import Image
@@ -537,7 +538,26 @@ class CardItemMenuAdmin(MDCard):
 ## admin
 
 class Admin(MDScreen):
-    pass
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        self.button_search = MDTextField(
+            # id="id_button_search",
+            hint_text="Search",
+            line_color_normal= (1, 0, 1, 1),
+            text_color_focus= (1, 1, 1, 1),
+            on_release=lambda x: self.button_search_callback("name"),
+
+        )
+        
+
+    def SearchApp(self, instance_button):
+        self.button_search.caller = instance_button
+        self.ids.toolbarNoticia.add_widget(self.button_search)
+        
+    def button_search_callback(self, name):
+        # search_text = self.ids.id_button_search.text
+        print(name)
 
 
 # fim do admin
