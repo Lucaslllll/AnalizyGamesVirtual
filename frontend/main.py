@@ -29,6 +29,8 @@ from kivymd.uix.card.card import MDCard
 from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.snackbar import Snackbar
 from kivymd.uix.textfield.textfield import MDTextField
+from kivymd.uix.responsivelayout import MDResponsiveLayout
+
 
 import json
 from PIL import Image
@@ -39,6 +41,7 @@ from scanner import JogosStats
 Window.softinput_mode = 'pan'
 from kivy.config import Config
 Config.set('kivy', 'keyboard_mode', 'systemandmulti')
+
 
 
 
@@ -56,7 +59,7 @@ class Gerenciador(MDScreenManager):
         store = JsonStore(self.path+"data.json")
         if store.exists('login_auth'):
             if store.get('login_auth')['access'] == True:
-                self.current = "admin_name"
+                self.current = "inicio_name"
 
 
 
@@ -327,10 +330,11 @@ class Inicio(MDScreen):
     def on_pre_enter(self):
         self.carregar_jogos()
         self.carregar_noticias()
-        self.ids.bottominicio.switch_tab("screen 1")
+        self.ids.bottominicio.switch_tab("screen 1") # é necessário especifica qual tab porquanto ao mudar a screen e voltar a tab que fica é meio que fanstama
         Window.bind(on_request_close=self.confirmacao)
         # self.ids.update({child.id:child for child in self.children})
         # print(self.ids.id_noticias.children)
+
 
     def pass_to(self, name):
         store = JsonStore(App.get_running_app().user_data_dir+"/data.json")
@@ -559,6 +563,28 @@ class Admin(MDScreen):
         # search_text = self.ids.id_button_search.text
         print(name)
 
+    def on_pre_enter(self):
+        Window.bind(on_keyboard=self.voltar)
+        Window.bind(on_request_close=self.voltar_android)
+
+    def on_pre_leave(self):
+        Window.unbind(on_keyboard=self.voltar)
+        Window.unbind(on_request_close=self.voltar_android)
+
+    def voltar_android(self, *args, **kwargs):
+        App.get_running_app().root.current = "menu_name"
+        return True
+
+    def voltar(self, window, key, *args):
+        # esc tem o codigo 27
+        if key == 27:
+            App.get_running_app().root.current = "menu_name"
+            return True
+
+        return False
+
+
+
 
 # fim do admin
 
@@ -567,6 +593,8 @@ class Admin(MDScreen):
 # para poder usar MDKivy preciso construir com MDApp inves de App do kivy
 class AnalizyApp(MDApp):
     def build(self):
+
+        self.theme_cls.material_style = "M3"
         return Gerenciador()
 
 AnalizyApp().run()

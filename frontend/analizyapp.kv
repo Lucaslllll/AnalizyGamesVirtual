@@ -2,8 +2,7 @@
 
 
 <Gerenciador>:
-    Admin:
-        name: "admin_name"
+    
 
     Login:
         name: "login_name"
@@ -15,13 +14,15 @@
         id: inicio_id
         name: "inicio_name"
 
+
     Menu:
         name: "menu_name"
 
     Noticia:
         name: "noticia_name"
 
-
+    Admin:
+        name: "admin_name"
 
 
 
@@ -226,24 +227,35 @@
             text: 'Inicio'
             icon: 'home'
             #badge_icon: "numeric-10"
-            
 
-            ScrollView:
-                MDBoxLayout:
-                    md_bg_color: app.theme_cls.primary_color
-                    id: id_jogo_stats
-                    orientation: "vertical"
-                    size_hint_y: None
-                    height: self.minimum_height
-                    padding: "40dp"
-                    spacing: "70dp"
+            MDBoxLayout:
+                orientation: "vertical"
+                
+                MDTopAppBar:
+                    id: toolbarInicial
+                    title: "Tabela de Pontuação"
+                    elevation: 4
+                    pos_hint: {"top": 1}
+                    md_bg_color: "#feea24"
 
-                    canvas:
-                        Color:
-                            rgba: (1, 1, 1, 1)
-                        Rectangle:
-                            size: self.size
-                            pos: 0, 0
+
+                ScrollView:
+
+                    MDBoxLayout:
+                        md_bg_color: app.theme_cls.primary_color
+                        id: id_jogo_stats
+                        orientation: "vertical"
+                        size_hint_y: None
+                        height: self.minimum_height
+                        padding: "40dp"
+                        spacing: "70dp"
+
+                        canvas:
+                            Color:
+                                rgba: (1, 1, 1, 1)
+                            Rectangle:
+                                size: self.size
+                                pos: 0, 0
 
 
 
@@ -263,7 +275,7 @@
                 title: "Últimas Notícias do Fut"
                 elevation: 4
                 pos_hint: {"top": 1}
-                md_bg_color: "#f5a823"
+                md_bg_color: "#feea24"
 
             MDSwiper:
                 id: id_noticias
@@ -354,7 +366,7 @@
         MDTopAppBar:
             title: "LEIA"
             id: toolbarNoticia
-            md_bg_color: "#f5a823"
+            md_bg_color: "#feea24"
             use_overflow: True
             #overflow_cls: CustomDropMenu()
 
@@ -369,9 +381,9 @@
             MDBoxLayout:
                 orientation: "vertical"
                 size_hint_y: None
-                height: self.minimum_height
-                spacing: "200dp"
-                padding: "20dp"
+                height: self.minimum_height+800
+                spacing: "420dp"
+                # padding: "20dp"
 
                 MDLabel:
                     id: title_noticia
@@ -380,13 +392,21 @@
                     halign: "center"
                     size: self.texture_size
                     text_size: dp(20), dp(10)
-
+                    spacing: "300dp"
 
                 MDLabel:
                     id: details_noticia
                     size: self.texture_size
                     text_size: dp(20), dp(10)
                     halign: "center"
+                    spacing: "300dp"
+
+                MDLabel:
+                    size: self.texture_size
+                    text_size: dp(20), dp(10)
+                    halign: "center"
+                    spacing: "300dp"
+                    padding: [0, 200]
 
 
 
@@ -435,130 +455,117 @@
     MDBoxLayout:
         orientation: "vertical"
 
+
         MDTopAppBar:
-            title: "LEIA"
+            orientation: "horizontal"
+            title: "DashMin"
             id: toolbarNoticia
-            md_bg_color: "#f5a823"
+            md_bg_color: "#feea24"
             use_overflow: True
             #overflow_cls: CustomDropMenu()
+            
 
             right_action_items: 
                 [
                 ["magnify", lambda x: root.SearchApp(x)],
                 ]
 
-            
 
-        ScrollView:
+        MDBoxLayout:
+            orientation: "horizontal"
 
             MDBoxLayout:
-                adaptive_height: True
-                size_hint: None, None
-                width: self.minimum_width
-                height: self.minimum_height
+                md_bg_color: 1, 0, 1, 1             
+                size_hint_x: None
+                width: "100dp"
 
-                MDCard:
-                    padding: 4
-                    size_hint: None, None
-                    size: "200dp", "100dp"
-                    md_bg_color: 0, 0.1, 0.8, 1                        
-
-                    MDRelativeLayout:
-
-                        MDIconButton:
-                            icon: "information"
-                            pos_hint: {"top": 1, "right": 1}
-
-                        MDLabel:
-                            id: label
-                            adaptive_size: True
-                            text: "Card"
-                            color: 1, 1, 1, 1
-                            pos: "12dp", "12dp"
-                            bold: True
-
-                MDCard:
-                    padding: 4
-                    size_hint: None, None
-                    size: "200dp", "100dp"
-                    md_bg_color: 0, 0.1, 0.8, 1                        
-
-                    MDRelativeLayout:
-
-                        MDIconButton:
-                            icon: "information"
-                            pos_hint: {"top": 1, "right": 1}
-
-                        MDLabel:
-                            id: label
-                            adaptive_size: True
-                            text: "Card"
-                            color: 1, 1, 1, 1
-                            pos: "12dp", "12dp"
-                            bold: True
+                MDLabel: 
+                    text: "Controle do App"
+                    color: 1, 1, 1, 1
 
 
-                MDCard:
-                    padding: 4
-                    size_hint: None, None
-                    size: "200dp", "100dp"
-                    md_bg_color: 0, 0.1, 0.8, 1                        
+            ScrollView:
+                spacing: "20dp"                
+                
 
-                    MDRelativeLayout:
+                MDStackLayout:
+                    padding: "10dp"
+                    spacing: "20dp"
+                    md_bg_color: 0.1, 0, 0.1, 1
+                    orientation: 'lr-tb'
+                    
 
-                        MDIconButton:
-                            icon: "information"
-                            pos_hint: {"top": 1, "right": 1}
+                    MDCard:
+                        padding: 4
+                        size_hint: None, None
+                        size: "160dp", "80dp"
+                        md_bg_color: 1, 1, 0.2, 1
+                        radius: 10                       
+                        
 
-                        MDLabel:
-                            id: label
-                            adaptive_size: True
-                            text: "Card"
-                            color: 1, 1, 1, 1
-                            pos: "12dp", "12dp"
-                            bold: True
+                        MDRelativeLayout:
+                            md_bg_color: 69/255,55/255,86/255,1
+                            radius: 10
 
+                            MDIconButton:
+                                icon: "information"
+                                pos_hint: {"top": 1, "right": 1}
 
-                MDCard:
-                    padding: 4
-                    size_hint: None, None
-                    size: "200dp", "100dp"
-                    md_bg_color: 0, 0.1, 0.8, 1                        
+                            MDLabel:
+                                id: label
+                                adaptive_size: True
+                                text: "Card"
+                                color: 1, 1, 1, 1
+                                pos: "12dp", "12dp"
+                                bold: True
 
-                    MDRelativeLayout:
+                    MDCard:
+                        padding: 4
+                        size_hint: None, None
+                        size: "160dp", "80dp"
+                        md_bg_color: 1, 1, 0.2, 1
+                        radius: 10                       
 
-                        MDIconButton:
-                            icon: "information"
-                            pos_hint: {"top": 1, "right": 1}
+                        MDRelativeLayout:
+                            md_bg_color: 69/255,55/255,86/255,1
+                            radius: 10
 
-                        MDLabel:
-                            id: label
-                            adaptive_size: True
-                            text: "Card"
-                            color: 1, 1, 1, 1
-                            pos: "12dp", "12dp"
-                            bold: True
+                            MDIconButton:
+                                icon: "information"
+                                pos_hint: {"top": 1, "right": 1}
 
+                            MDLabel:
+                                id: label
+                                adaptive_size: True
+                                text: "Card"
+                                color: 1, 1, 1, 1
+                                pos: "12dp", "12dp"
+                                bold: True
 
-                MDCard:
-                    padding: 4
-                    size_hint: None, None
-                    size: "200dp", "100dp"
-                    md_bg_color: 0, 0.1, 0.8, 1                        
+                       
+                    MDCard:
+                        padding: 4
+                        size_hint: None, None
+                        size: "160dp", "80dp"
+                        md_bg_color: 1, 1, 0.2, 1
+                        radius: 10                       
 
-                    MDRelativeLayout:
+                        MDRelativeLayout:
+                            md_bg_color: 69/255,55/255,86/255,1
+                            radius: 10
 
-                        MDIconButton:
-                            icon: "information"
-                            pos_hint: {"top": 1, "right": 1}
+                            MDIconButton:
+                                icon: "information"
+                                pos_hint: {"top": 1, "right": 1}
 
-                        MDLabel:
-                            id: label
-                            adaptive_size: True
-                            text: "Card"
-                            color: 1, 1, 1, 1
-                            pos: "12dp", "12dp"
-                            bold: True
+                            MDLabel:
+                                id: label
+                                adaptive_size: True
+                                text: "Card"
+                                color: 1, 1, 1, 1
+                                pos: "12dp", "12dp"
+                                bold: True             
+
 
 
 
@@ -592,6 +599,7 @@
     size_hint_y: None
     height: "86dp"
     padding: "4dp"
+    on_release: app.root.current = "admin_name"
 
     MDIconButton
         id: id_icon
