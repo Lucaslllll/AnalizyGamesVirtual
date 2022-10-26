@@ -23,7 +23,7 @@ Kivy==2.1.0
 Kivy-Garden==0.1.5
 #LibAppArmor==2.13.6
 #lightdm-gtk-greeter-settings==1.2.2
-lxml==4.6.3
+lxml==4.9.1
 MarkupSafe==2.1.1
 more-itertools==4.2.0
 #mugshot==0.4.3
