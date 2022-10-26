@@ -128,10 +128,19 @@ class Usuario(object):
         
 
     def do_register(self, data, *args,**kwargs):
-        #print(data)
-        
+        auth = Authenticat()
+        resposta = auth.do_auth()
+
+        self.token_access = auth.get_token()
+        self.token_refresh = auth.get_token_refresh()
+
+
+        head = {'Authorization': 'Bearer {}'.format(self.token_access)}
+
+
         try:
-            requisicao = requests.post("http://localhost:8000/accounts/usuario/", data=data)
+            requisicao = requests.post("http://localhost:8000/accounts/usuario/", data=data,
+                                        headers=head)
         except:
             return None
 

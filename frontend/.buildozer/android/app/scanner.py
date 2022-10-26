@@ -9,11 +9,14 @@ import ssl
 
 
 class JogosStats(object):
-    times = 0
-    find_two_times_var = False
-    times_cabecalho = 0
-    cabecalho_pass_var = False
-    final_text = []
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.times = 0
+        self.find_two_times_var = False
+        self.times_cabecalho = 0
+        self.cabecalho_pass_var = False
+        self.final_text = []
+
 
     def get(self):
         context = ssl._create_unverified_context()
@@ -88,7 +91,8 @@ class JogosStats(object):
 
 
         # print("passou pelo for = "+str(dic))
-
+        # print("============================")
+        # print(dic)
 
         return dic
 

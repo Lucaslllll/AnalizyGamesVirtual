@@ -26,6 +26,10 @@ from kivymd.uix.button import MDFlatButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.swiper.swiper import MDSwiperItem
 from kivymd.uix.card.card import MDCard
+from kivymd.uix.menu import MDDropdownMenu
+from kivymd.uix.snackbar import Snackbar
+from kivymd.uix.textfield.textfield import MDTextField
+from kivymd.uix.responsivelayout import MDResponsiveLayout
 
 
 import json
@@ -41,9 +45,11 @@ Config.set('kivy', 'keyboard_mode', 'systemandmulti')
 
 
 
+
 class Gerenciador(MDScreenManager):
     path = ""
     admin_is = False
+    noticia_atual = None
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -256,7 +262,7 @@ class Registro(MDScreen):
 ## inicio
 
 class Inicio(MDScreen):
-    
+
         
     def carregar_jogos(self):
         scan = JogosStats()
@@ -298,7 +304,6 @@ class Inicio(MDScreen):
                 saldo_gols.append(it)
                 
 
-            
             for i in range(0, contador+1): 
                 self.ids.id_jogo_stats.add_widget(
                         Table(
@@ -313,18 +318,23 @@ class Inicio(MDScreen):
         if type(news) is list:
             for n in news: 
                 self.ids.id_noticias.add_widget(
-                    MySwiper(text=n["title"], url=n["thumb"], detalhes=n["details"])
+                    MySwiper(text=n["title"], url=n["thumb"], detalhes=n["preview"], id_noticia=n['id'])
                 )
-        
-        
+    
+    def ir_noticia(self, id_noticia):
+        App.get_running_app().root.noticia_atual = id_noticia
+        App.get_running_app().root.current = "noticia_name"
+
+     
 
     def on_pre_enter(self):
         self.carregar_jogos()
         self.carregar_noticias()
-        self.ids.bottominicio.switch_tab("screen 1")
+        self.ids.bottominicio.switch_tab("screen 1") # é necessário especifica qual tab porquanto ao mudar a screen e voltar a tab que fica é meio que fanstama
         Window.bind(on_request_close=self.confirmacao)
         # self.ids.update({child.id:child for child in self.children})
         # print(self.ids.id_noticias.children)
+
 
     def pass_to(self, name):
         store = JsonStore(App.get_running_app().user_data_dir+"/data.json")
@@ -387,13 +397,85 @@ class Table(MDBoxLayout):
         self.ids.label_table.text = text
 
 class MySwiper(MDSwiperItem):
-    def __init__(self, text='futebol', url='none.png', detalhes="detalhes", **kwargs):
+    def __init__(self, text='futebol', url='none.png', detalhes="detalhes", id_noticia=None, **kwargs):
         super().__init__(**kwargs)
         self.ids.id_label_noticias.text = text
         self.ids.id_label_imagens.source = url
         self.ids.id_noticias_descricao.text = detalhes
+        if id_noticia != None: 
+            self.id_da_noticia = id_noticia
+
+
 ## fim de inicio
 
+
+class Noticia(MDScreen):
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        menu_items = [
+            {
+                "viewclass": "OneLineListItem",
+                "text": "Home",
+                "height": 56,
+                "on_release": lambda x="Home": self.menu_callback("inicio_name"),
+            },
+            {
+                "viewclass": "OneLineListItem",
+                "text": "Menu",
+                "height": 56,
+                "on_release": lambda x="Menu": self.menu_callback("menu_name"),
+            }
+
+        ]
+        self.menu = MDDropdownMenu(
+            items=menu_items,
+            width_mult=4,
+        )
+
+
+    def DropApp(self, instance_action_top_appbar_button):
+        self.menu.caller = instance_action_top_appbar_button
+        self.menu.open()
+    
+    def menu_callback(self, text_item):
+        self.menu.dismiss()
+        App.get_running_app().root.current = text_item
+
+
+    def on_pre_enter(self):
+        id_da_noticia = App.get_running_app().root.noticia_atual
+        news = Noticias().get(id_noticia=id_da_noticia)
+        if type(news) is dict:
+            self.ids.title_noticia.text = news['title']
+            self.ids.details_noticia.text = news['details']
+
+        Window.bind(on_keyboard=self.voltar)
+        Window.bind(on_request_close=self.voltar_android)
+
+    def on_pre_leave(self):
+        Window.unbind(on_keyboard=self.voltar)
+        Window.unbind(on_request_close=self.voltar_android)
+
+    def voltar_android(self, *args, **kwargs):
+        App.get_running_app().root.current = "inicio_name"
+        return True
+
+    def voltar(self, window, key, *args):
+        # esc tem o codigo 27
+        if key == 27:
+            App.get_running_app().root.current = "inicio_name"
+            return True
+
+        return False
+
+
+
+## menu
+
+class CustomDropMenu(MDDropdownMenu):
+    pass
 
 
 class Menu(MDScreen):
@@ -451,17 +533,68 @@ class Menu(MDScreen):
 
 
 
-
-
 class CardItemMenuAdmin(MDCard):
     pass
 
+# fim do menu
+
+
+## admin
+
+class Admin(MDScreen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        self.button_search = MDTextField(
+            # id="id_button_search",
+            hint_text="Search",
+            line_color_normal= (1, 0, 1, 1),
+            text_color_focus= (1, 1, 1, 1),
+            on_release=lambda x: self.button_search_callback("name"),
+
+        )
+        
+
+    def SearchApp(self, instance_button):
+        self.button_search.caller = instance_button
+        self.ids.toolbarNoticia.add_widget(self.button_search)
+        
+    def button_search_callback(self, name):
+        # search_text = self.ids.id_button_search.text
+        print(name)
+
+    def on_pre_enter(self):
+        Window.bind(on_keyboard=self.voltar)
+        Window.bind(on_request_close=self.voltar_android)
+
+    def on_pre_leave(self):
+        Window.unbind(on_keyboard=self.voltar)
+        Window.unbind(on_request_close=self.voltar_android)
+
+    def voltar_android(self, *args, **kwargs):
+        App.get_running_app().root.current = "menu_name"
+        return True
+
+    def voltar(self, window, key, *args):
+        # esc tem o codigo 27
+        if key == 27:
+            App.get_running_app().root.current = "menu_name"
+            return True
+
+        return False
+
+
+
+
+# fim do admin
 
 
     
 # para poder usar MDKivy preciso construir com MDApp inves de App do kivy
 class AnalizyApp(MDApp):
     def build(self):
+
+        self.theme_cls.material_style = "M3"
         return Gerenciador()
 
 AnalizyApp().run()

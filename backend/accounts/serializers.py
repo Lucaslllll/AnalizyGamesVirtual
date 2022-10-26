@@ -9,10 +9,12 @@ from .models import Usuario
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
-        exclude = ('password', 'date_expiration', )
+        exclude = ('date_expiration', )
 
     def validate_password(self, data):
+        # print(data)
         value = make_password(password=data, salt=None, hasher='pbkdf2_sha256')
+        # print(value)
         return value
 
 class LoginSerializer(serializers.Serializer):
