@@ -13,7 +13,7 @@ Kivy-Garden==0.1.5
 kivymd==1.0.2
 lxml==4.9.1
 monotonic==1.6
-numpy==1.23.3
+numpy==1.22.0
 pandas @ file:///home/Lucas/Documentos/pandas
 Pillow==9.0.1
 pkg_resources==0.0.0
