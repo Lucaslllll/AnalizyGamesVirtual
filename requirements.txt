@@ -37,7 +37,7 @@ pbr==5.5.0
 pep517==0.6.0
 pexpect==4.8.0
 #pikepdf==1.17.3+dfsg
-Pillow==8.1.2
+Pillow==9.0.1
 platformdirs==2.5.2
 PyBluez==0.23
 pycairo==1.16.2
