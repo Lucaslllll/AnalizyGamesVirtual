@@ -16,5 +16,5 @@ class NoticiasSerializer(serializers.ModelSerializer):
 
 class ImagensNoticiasSerializer(serializers.Serializer):
     class Meta:
-        model = Noticias
+        model = ImagensNoticias
         fields = '__all__'

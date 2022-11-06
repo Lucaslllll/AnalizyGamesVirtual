@@ -10,3 +10,6 @@ class Usuario(models.Model):
 	active = models.BooleanField(default=False)
 	date_expiration = models.DateTimeField(null=True, blank=True)
 	admin = models.BooleanField(default=False, null=True)
+
+	def __str__(self):
+		return self.first_name+" | "+str(self.admin)

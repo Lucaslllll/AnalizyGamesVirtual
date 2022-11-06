@@ -2,7 +2,12 @@
 
 
 <Gerenciador>:
-    
+    ListarNoticias:
+        id: listanoticias_id
+        name: "listar_noticia_name"
+
+    Admin:
+        name: "admin_name"
 
     Login:
         name: "login_name"
@@ -14,15 +19,13 @@
         id: inicio_id
         name: "inicio_name"
 
-
     Menu:
         name: "menu_name"
 
     Noticia:
         name: "noticia_name"
 
-    Admin:
-        name: "admin_name"
+    
 
 
 
@@ -449,6 +452,7 @@
                 subtitle_change: 'Voltar'
                 on_release: root.voltar_android()
 
+# admin
 
 <Admin>:
 
@@ -508,13 +512,13 @@
                             radius: 10
 
                             MDIconButton:
-                                icon: "information"
+                                icon: "wall"
                                 pos_hint: {"top": 1, "right": 1}
 
                             MDLabel:
                                 id: label
                                 adaptive_size: True
-                                text: "Card"
+                                text: "Cadastrar Notícia"
                                 color: 1, 1, 1, 1
                                 pos: "12dp", "12dp"
                                 bold: True
@@ -531,13 +535,13 @@
                             radius: 10
 
                             MDIconButton:
-                                icon: "information"
+                                icon: "delete"
                                 pos_hint: {"top": 1, "right": 1}
 
                             MDLabel:
                                 id: label
                                 adaptive_size: True
-                                text: "Card"
+                                text: "Apagar Notícia"
                                 color: 1, 1, 1, 1
                                 pos: "12dp", "12dp"
                                 bold: True
@@ -561,13 +565,55 @@
                             MDLabel:
                                 id: label
                                 adaptive_size: True
-                                text: "Card"
+                                text: "Listar Notícias"
                                 color: 1, 1, 1, 1
                                 pos: "12dp", "12dp"
                                 bold: True             
 
 
 
+<ListarNoticias>:
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDTopAppBar:
+            elevation: 4
+            title: "MDCardSwipe"
+            md_bg_color: 0.1, 0, 0.1, 1
+
+        MDScrollView:
+            scroll_timeout : 100
+
+            MDList:
+                id: idlist
+                padding: 0
+
+
+
+<SwipeToDeleteItem>:
+    size_hint_y: None
+    height: content.height
+    on_swipe_complete: app.root.ids.listanoticias_id.on_swipe_complete(root)
+
+    MDCardSwipeLayerBox:
+        padding: "8dp"
+
+        MDIconButton:
+            md_bg_color: 1, 1, 0, 1
+            icon: "trash-can"
+            pos_hint: {"center_y": .5}
+            on_release: app.root.ids.listanoticias_id.remove_item_for_icon(root)
+
+    MDCardSwipeFrontBox:
+
+        # Content of card.
+        OneLineListItem:
+            id: content
+            text: root.text
+            _no_ripple_effect: True
+
+
+# admin fim
 
 
 
