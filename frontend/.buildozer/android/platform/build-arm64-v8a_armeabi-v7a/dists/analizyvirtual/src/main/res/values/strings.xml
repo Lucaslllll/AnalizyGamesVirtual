@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">AnalizyVirtual</string>
-    <string name="private_version">fb899c0faaadeea38c3ae3a749c6615265dbac8d</string>
+    <string name="private_version">0df0f8819a3220e4db62966b6f6b6389535f5248</string>
     <string name="presplash_color">#000000</string>
     <string name="urlScheme">kivy</string>
 </resources>

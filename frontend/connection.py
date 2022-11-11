@@ -189,6 +189,69 @@ class Noticias(object):
         else:
             return "Problemas em contatar o servidor!"
 
+    def delete(self, id_noticia=None):
+        auth = Authenticat()
+        resposta = auth.do_auth()
+
+
+        if resposta == True:
+            self.token_access = auth.get_token()
+            self.token_refresh = auth.get_token_refresh()
+            head = {'Authorization': 'Bearer {}'.format(self.token_access)}
+
+            try:
+                request = requests.delete("http://localhost:8000/noticias/{}".format(id_noticia), headers=head)
+            except:
+                return "Error ao Fazer Requisição ao Servidor"
+
+            if request.status_code == 200:
+                return request.json()
+            elif request.status_code == 401:
+                return "Sem Autorização"
+            else:
+                return "Erro Inesperado"
+
+        
+        elif resposta == False:
+            return "Credencias Inválidas"
+
+        else:
+            return "Problemas em contatar o servidor!"
+
+
+    def post(self, data, files, *args,**kwargs):
+        auth = Authenticat()
+        resposta = auth.do_auth()
+
+        self.token_access = auth.get_token()
+        self.token_refresh = auth.get_token_refresh()
+
+
+        head = {'Authorization': 'Bearer {}'.format(self.token_access)}
+
+
+        try:
+            requisicao = requests.post("http://localhost:8000/noticias/", data=data, files=files,
+                                        headers=head)
+        except:
+            return None
+
+
+        # codigo 201 é para create
+        if requisicao.status_code == 201:
+            return True
+        elif requisicao.status_code == 200:
+            return request.json()
+        elif requisicao.status_code == 401:
+            return "Sem Autorização"
+        else:
+            return "Erro Inesperado"
+
+
+        # print(requisicao.content)
+        return False
+
+
 
 # news = Noticias()
 

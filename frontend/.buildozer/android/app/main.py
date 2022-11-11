@@ -30,6 +30,7 @@ from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.snackbar import Snackbar
 from kivymd.uix.textfield.textfield import MDTextField
 from kivymd.uix.responsivelayout import MDResponsiveLayout
+from kivymd.uix.card import MDCardSwipe
 
 
 import json
@@ -38,7 +39,7 @@ from connection import Usuario, Noticias
 from scanner import JogosStats
 
 
-Window.softinput_mode = 'pan'
+Window.softinput_mode = 'below_target'
 from kivy.config import Config
 Config.set('kivy', 'keyboard_mode', 'systemandmulti')
 
@@ -584,7 +585,117 @@ class Admin(MDScreen):
         return False
 
 
+class ListarNoticias(MDScreen):
+    instance_to_delete = None
+    dialog = None
+    dialog_2 = None
 
+    def on_pre_enter(self):
+        # necessário para iniciar antes os ids de listar notícias
+        Clock.schedule_once(self.on_start, 1)
+        
+
+    def on_start(self, *args):
+        news = Noticias().get()
+
+        if type(news) is list:           
+            for i_news in news:
+                print(i_news['thumb'])
+                self.ids.idlist.add_widget(
+                    SwipeToDeleteItem(noticia_id=i_news['id'], text=i_news['title'], url_image=i_news['thumb'])
+                )
+
+
+    # types of delete
+    def on_swipe_complete(self, instance):
+        self.instance_to_delete = instance
+
+        self.dialog = MDDialog(
+            text="Deseja realmente apagar essa notícia?",
+            md_bg_color=(1,1,1,1),
+            buttons=[
+                MDFlatButton(
+                    text="Não",
+                    theme_text_color="Custom",
+                    text_color=(0,0,0,1),
+                    on_release=self.closeDialog
+                ),
+
+                MDFlatButton(
+                    text="Sim",
+                    theme_text_color="Custom",
+                    text_color=(0,0,0,1),
+                    on_release=self.sure_of_delete
+                ),
+            ],
+        )
+    
+        self.dialog.open()
+
+        return True
+
+    def remove_item_for_icon(self, instance):
+        self.instance_to_delete = instance
+
+        self.dialog_2 = MDDialog(
+            text="Deseja realmente apagar essa notícia?",
+            md_bg_color=(1,1,1,1),
+            buttons=[
+                MDFlatButton(
+                    text="Não",
+                    theme_text_color="Custom",
+                    text_color=(0,0,0,1),
+                    on_release=self.closeDialog_2
+                ),
+
+                MDFlatButton(
+                    text="Sim",
+                    theme_text_color="Custom",
+                    text_color=(0,0,0,1),
+                    on_release=self.sure_of_delete
+                ),
+            ],
+        )
+    
+        self.dialog_2.open()
+
+        return True
+
+    # fim types of delete
+
+
+    # choices
+    def closeDialog(self, inst):
+        self.dialog.dismiss()
+    def closeDialog_2(self, inst): # isso resolve o bug de não fechar para icon button delete
+        self.dialog_2.dismiss()
+
+
+    def sure_of_delete(self, instance):
+        news = Noticias()
+        news.delete(id_noticia=self.instance_to_delete.noticia_id)
+        
+        self.ids.idlist.remove_widget(self.instance_to_delete)
+        self.dialog.dismiss()
+    
+    def sure_of_delete_2(self, instance):    
+        news = Noticias()
+        news.delete(id_noticia=self.instance_to_delete.noticia_id)
+        
+        self.ids.idlist.remove_widget(self.instance_to_delete)
+        self.dialog_2.dismiss()
+
+    # fim choices
+
+
+class SwipeToDeleteItem(MDCardSwipe):
+    text = StringProperty()
+    noticia_id = NumericProperty()
+    url_image = StringProperty()
+
+
+
+    
 
 # fim do admin
 
@@ -593,7 +704,8 @@ class Admin(MDScreen):
 # para poder usar MDKivy preciso construir com MDApp inves de App do kivy
 class AnalizyApp(MDApp):
     def build(self):
-
+        self.theme_cls.theme_style = "Light"
+        self.theme_cls.primary_palette = "Blue"
         self.theme_cls.material_style = "M3"
         return Gerenciador()
 

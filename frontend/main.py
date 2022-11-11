@@ -31,8 +31,10 @@ from kivymd.uix.snackbar import Snackbar
 from kivymd.uix.textfield.textfield import MDTextField
 from kivymd.uix.responsivelayout import MDResponsiveLayout
 from kivymd.uix.card import MDCardSwipe
+from kivymd.uix.filemanager import MDFileManager
+from kivymd.toast import toast
 
-
+import os
 import json
 from PIL import Image
 from connection import Usuario, Noticias
@@ -52,15 +54,15 @@ class Gerenciador(MDScreenManager):
     admin_is = False
     noticia_atual = None
 
-    # def __init__(self, **kwargs):
-    #     super().__init__(**kwargs)
-    #     self.path = App.get_running_app().user_data_dir+"/"
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.path = App.get_running_app().user_data_dir+"/"
         
             
-    #     store = JsonStore(self.path+"data.json")
-    #     if store.exists('login_auth'):
-    #         if store.get('login_auth')['access'] == True:
-    #             self.current = "inicio_name"
+        store = JsonStore(self.path+"data.json")
+        if store.exists('login_auth'):
+            if store.get('login_auth')['access'] == True:
+                self.current = "inicio_name"
 
 
 
@@ -532,6 +534,29 @@ class Menu(MDScreen):
 
         App.get_running_app().root.current = "login_name"
 
+    def see_help(self):
+        
+        strin = """ App consulta de estáticas e notícias do mundo do futebol e das apostas virtuais.
+Aplicativo em fase beta. Mais atualizações em breve... """
+        
+        self.dialog = MDDialog(
+            title="Ajuda",
+            text=strin,
+            md_bg_color=(1,1,1,1),
+            buttons=[
+                MDFlatButton(
+                    text="Sair",
+                    theme_text_color="Custom",
+                    text_color=(0,0,0,1),
+                    on_release=self.closeDialog
+                ),
+            ],
+        )
+    
+        self.dialog.open()
+
+    def closeDialog(self, inst):
+        self.dialog.dismiss()
 
 
 class CardItemMenuAdmin(MDCard):
@@ -593,13 +618,22 @@ class ListarNoticias(MDScreen):
     def on_pre_enter(self):
         # necessário para iniciar antes os ids de listar notícias
         Clock.schedule_once(self.on_start, 1)
+        Window.bind(on_keyboard=self.voltar)
+        Window.bind(on_request_close=self.voltar_android)
         
+    def on_pre_leave(self):
+        Window.unbind(on_keyboard=self.voltar)
+        Window.unbind(on_request_close=self.voltar_android)
 
     def on_start(self, *args):
-        for i in range(20):
-            self.ids.idlist.add_widget(
-                SwipeToDeleteItem(text=f"One-line item {i}")
-            )
+        news = Noticias().get()
+
+        if type(news) is list:           
+            for i_news in news:
+                self.ids.idlist.add_widget(
+                    SwipeToDeleteItem(noticia_id=i_news['id'], text=i_news['title'], url_image=i_news['thumb'])
+                )
+
 
     # types of delete
     def on_swipe_complete(self, instance):
@@ -667,19 +701,122 @@ class ListarNoticias(MDScreen):
 
 
     def sure_of_delete(self, instance):
+        news = Noticias()
+        news.delete(id_noticia=self.instance_to_delete.noticia_id)
+        
         self.ids.idlist.remove_widget(self.instance_to_delete)
         self.dialog.dismiss()
+    
+    def sure_of_delete_2(self, instance):    
+        news = Noticias()
+        news.delete(id_noticia=self.instance_to_delete.noticia_id)
+        
+        self.ids.idlist.remove_widget(self.instance_to_delete)
         self.dialog_2.dismiss()
-                
+
     # fim choices
+
+    def voltar_android(self, *args, **kwargs):
+        App.get_running_app().root.current = "admin_name"
+        return True
+
+    def voltar(self, window, key, *args):
+        # esc tem o codigo 27
+        if key == 27:
+            App.get_running_app().root.current = "admin_name"
+            return True
+
+        return False
+
 
 
 class SwipeToDeleteItem(MDCardSwipe):
     text = StringProperty()
+    noticia_id = NumericProperty()
+    url_image = StringProperty()
 
 
+
+class CadastrarNoticia(MDScreen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        Window.bind(on_keyboard=self.events)
+        self.manager_open = False
+        self.file_manager = MDFileManager(
+            exit_manager=self.exit_manager, select_path=self.select_path
+        )
+        self.files = {}
+
+
+    def on_pre_enter(self):
+        Window.bind(on_keyboard=self.voltar)
+        Window.bind(on_request_close=self.voltar_android)
+        
+    def on_pre_leave(self):
+        Window.unbind(on_keyboard=self.voltar)
+        Window.unbind(on_request_close=self.voltar_android)
+
+
+    def file_manager_open(self):
+        self.file_manager.show(os.path.expanduser("~"))
+        self.manager_open = True
+
+    def select_path(self, path: str):
+        self.exit_manager()
+        self.files = {'thumb': open(path, 'rb')}
+        toast(path)
+
+
+    def exit_manager(self, *args):
+        self.manager_open = False
+        self.file_manager.close()
+
+
+    def events(self, instance, keyboard, keycode, text, modifiers):
+        if keyboard in (1001, 27):
+            if self.manager_open:
+                self.file_manager.back()
+
+        return True
+
+    def timeout_spinner(self, *args):
+        self.ids.load_spinner_noticia.active = False
+      
+    def on_press_spinner(self, *args):
+        self.ids.load_spinner_noticia.active = True
+        self.ids.load_spinner_noticia.determinate = False
+        self.ids.load_spinner_noticia.determinate_time = 2
+        # depois de 3 segundos executará timeout_spinner
+        # desligando o spinner
+        Clock.schedule_once(self.timeout_spinner, 3)
+
+    def send_news(self):
+        data = {
+            "title" : self.ids.id_noticia_title.text,
+            "preview" : self.ids.id_noticia_preview.text,
+            "details" : self.ids.id_noticia_details.text,
+        }
+
+        news = Noticias()
+        resposta = news.post(data=data, files=self.files)
+
+        if resposta == True:
+            App.get_running_app().root.current = "admin_name"
 
     
+
+    def voltar_android(self, *args, **kwargs):
+        App.get_running_app().root.current = "admin_name"
+        return True
+
+    def voltar(self, window, key, *args):
+        # esc tem o codigo 27
+        if key == 27:
+            App.get_running_app().root.current = "admin_name"
+            return True
+
+        return False
+
 
 # fim do admin
 
@@ -692,6 +829,9 @@ class AnalizyApp(MDApp):
         self.theme_cls.primary_palette = "Blue"
         self.theme_cls.material_style = "M3"
         return Gerenciador()
+
+    
+
 
 AnalizyApp().run()
 
