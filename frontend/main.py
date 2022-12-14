@@ -1,6 +1,7 @@
 # kivy imports
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.gridlayout import GridLayout
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.core.window import Window
 from kivy.uix.behaviors.button import ButtonBehavior
@@ -20,6 +21,8 @@ from kivymd.app import MDApp
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.screenmanager import MDScreenManager
 from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.gridlayout import MDGridLayout
+from kivymd.uix.stacklayout import MDStackLayout
 from kivymd.uix.widget import MDWidget
 from kivymd.uix.snackbar import BaseSnackbar
 from kivymd.uix.button import MDFlatButton
@@ -308,13 +311,50 @@ class Inicio(MDScreen):
                 
 
             for i in range(0, contador+1): 
-                self.ids.id_jogo_stats.add_widget(
-                        Table(
-                            text=str(times[i])+" | "+str(pontos[i])+" | "+str(jogos_jogados[i])+" | "+str(vitorias[i])
-                            +" | "+str(empate[i])+" | "+str(derrotas[i])+" | "+str(saldo_gols[i])
-                                        
-                            )
-                        )
+                Table(
+                    text=str(times[i])+" | "+str(pontos[i])+" | "+str(jogos_jogados[i])+" | "+str(vitorias[i])
+                    +" | "+str(empate[i])+" | "+str(derrotas[i])+" | "+str(saldo_gols[i])
+                                
+                    )
+            
+                # self.ids.id_jogo_stats.add_widget(
+                #         Table(
+                #             text=str(times[i])
+                #         )
+                #         )
+                # self.ids.id_jogo_stats.add_widget(
+                #         Table(
+                #             text=str(pontos[i])
+                #         )
+                #         )
+
+                # self.ids.id_jogo_stats.add_widget(
+                #         Table(
+                #             text=str(jogos_jogados[i])
+                #         )
+                #         )
+                # self.ids.id_jogo_stats.add_widget(
+                #         Table(
+                #             text=str(vitorias[i])
+                #         )
+                #         )
+                # self.ids.id_jogo_stats.add_widget(
+                #         Table(
+                #             text=str(empate[i])
+                #         )
+                #         )
+                # self.ids.id_jogo_stats.add_widget(
+                #         Table(
+                #             text=str(derrotas[i])
+                #         )
+                #         )
+
+                # self.ids.id_jogo_stats.add_widget(
+                #         Table(
+                #             text=str(saldo_gols[i])                
+                #         )
+                #         )
+                
 
     def carregar_noticias(self):
         news = Noticias().get()
@@ -394,9 +434,10 @@ class Inicio(MDScreen):
 
 
 
-class Table(MDBoxLayout):
+class Table(MDStackLayout):
     def __init__(self, text='', **kwargs):
         super().__init__(**kwargs)
+        self.orientation = "lr-tb"
         self.ids.label_table.text = text
 
 class MySwiper(MDSwiperItem):
@@ -536,9 +577,9 @@ class Menu(MDScreen):
 
     def see_help(self):
         
-        strin = """ App consulta de estáticas e notícias do mundo do futebol e das apostas virtuais.
-Aplicativo em fase beta. Mais atualizações em breve... """
-        
+        strin = " App consulta de estáticas e notícias do mundo do futebol e das apostas virtuais."\
+        "\n\n\n Aplicativo em fase beta. Mais atualizações em breve... "
+
         self.dialog = MDDialog(
             title="Ajuda",
             text=strin,

@@ -15,7 +15,7 @@ lxml==4.9.1
 monotonic==1.6
 numpy==1.22.0
 pandas @ file:///home/Lucas/Documentos/pandas
-Pillow==9.0.1
+pillow>=9.2.0
 pkg_resources==0.0.0
 platformdirs==2.5.2
 Pygments==2.13.0
